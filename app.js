@@ -1,6 +1,7 @@
 // CONFIGURACIÓN DE CONEXIÓN A NAVE-POM-POM
-const SUPABASE_URL = "https://TU_PROYECTO_ID.supabase.co"; // Poné tu URL de Supabase acá
-const SUPABASE_KEY = "TU_ANON_KEY_DE_SUPABASE";       // Poné tu Anon Key acá
+const SUPABASE_URL = "https://manaejtcurxbcsozqcsh.supabase.co"; 
+const SUPABASE_KEY = "sb_publishable_LTZY6uMVRCnd_K41dneBtw_xn3XU0ke";
+
 const SLUG_NAVE = "babylonia";
 
 async function arrancarReactor() {
