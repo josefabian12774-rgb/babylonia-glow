@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BABYLONIA GLOW - NAVE CENTRAL URBANA</title>
+  <title>BABYLONIA GLOW - PROTOCOLO E.U.L.</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,9 @@
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <style>
-    /* RESET EXTENDED URBAN LAB: PROHIBIDO EL SCROLL EN EL CELULAR */
+    /* ============================================================================
+       🎨 DIRECTIVA DE ESTILOS CRÍTICOS: ARQUITECTURA FIJA (SIN SCROLL)
+       ============================================================================ */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -28,28 +30,28 @@
       font-family: 'Courier Prime', monospace;
     }
 
-    /* CHASIS CONTENEDOR AJUSTADO AL ALTO DISPONIBLE (CERO DERROCHE DE ESPACIO) */
+    /* CHASIS CONTENEDOR CENTRAL: ABARCA EL 100% DE LA PANTALLA DEL CELULAR */
     .urban-lab-wrapper {
       width: 100%;
       height: 100vh;
       overflow: hidden;
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: radial-gradient(circle at 50% 50%, rgba(40, 40, 38, 0.85), rgba(15, 15, 14, 1)),
-                  repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+      background: radial-gradient(circle at 50% 50%, rgba(35, 35, 33, 0.9), rgba(12, 12, 11, 1)),
+                  repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px);
       color: #e2e8f0;
       position: relative;
     }
 
-    /* CABECERA CON ILUMINACIÓN RADIAL VERDE NEÓN */
+    /* HEADER TÁCTICO INTEGRADO */
     .header-tactico {
       text-align: center;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
     .logo-babylonia {
-      font-size: 2.2rem;
+      font-size: 2rem;
       color: #4ade80;
       font-weight: 900;
       letter-spacing: -1px;
@@ -57,30 +59,30 @@
       text-transform: uppercase;
     }
     .subtitulo-militar {
-      font-size: 0.65rem;
-      color: #8a8a8a;
+      font-size: 0.6rem;
+      color: #a3a3a3;
       letter-spacing: 1px;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
-    /* CONSOLA DE FUSIBLES: SWITCH ANALÓGICO */
+    /* CONSOLA DE FUSIBLES (SWITCHES SUPERIORES) */
     .consola-fusibles {
       display: flex;
       justify-content: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .placa-metalica {
       background: #242422;
-      padding: 6px 16px;
+      padding: 6px 14px;
       border: 2px solid #3f3f3e;
       box-shadow: inset 0px 0px 8px rgba(0, 0, 0, 0.9), 3px 3px 0px rgba(0, 0, 0, 0.4);
       border-radius: 4px;
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
     }
     .label-tactico {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: bold;
       transition: color 0.3s ease;
     }
@@ -92,12 +94,12 @@
       color: #4a4a49;
     }
     
-    /* PALANCA DE CUCHILLA CSS INDUSTRIAL */
+    /* CONTROL SWITCH ANALÓGICO */
     .switch-analogo {
       position: relative;
       display: inline-block;
-      width: 55px;
-      height: 26px;
+      width: 46px;
+      height: 22px;
       cursor: pointer;
     }
     .switch-analogo input { opacity: 0; width: 0; height: 0; }
@@ -106,62 +108,86 @@
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: #171715;
       border: 2px solid #3b3b3a;
-      border-radius: 26px;
-      box-shadow: inset 2px 2px 5px rgba(0,0,0,0.8);
+      border-radius: 22px;
+      box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8);
       transition: 0.3s;
     }
     .palanca-cuchilla:before {
       position: absolute;
       content: "";
-      height: 18px;
-      width: 18px;
+      height: 14px;
+      width: 14px;
       left: 2px;
       bottom: 2px;
       background-color: #4f4f4e;
       border: 1px solid #6b6b6a;
       border-radius: 50%;
       transition: 0.3s;
-      box-shadow: 1px 1px 3px rgba(0,0,0,0.6);
     }
     .switch-analogo input:checked + .palanca-cuchilla {
       background-color: #213b28;
       border-color: #4ade80;
     }
     .switch-analogo input:checked + .palanca-cuchilla:before {
-      transform: translateX(29px);
+      transform: translateX(24px);
       background-color: #4ade80;
       box-shadow: 0 0 8px #4ade80;
     }
 
-    /* MONITOR SUPERIOR TIPO CARTEL DE CARTÓN */
+    /* MONITOR CENTRAL DE STOCK */
     .monitor-central {
-      background: #cdaf79;
-      color: #21190e;
-      margin: 0 auto 10px auto;
-      padding: 6px 12px;
+      background: rgba(205, 175, 121, 0.15);
+      border: 1px dashed rgba(74, 222, 128, 0.4);
+      color: #4ade80;
+      padding: 4px;
       font-weight: bold;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       text-align: center;
-      width: 92%;
-      box-shadow: 3px 3px 0px rgba(0,0,0,0.4);
-      transform: rotate(-0.5deg);
+      width: 100%;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
     }
 
-    /* GRID ESTÁTICO EN REJILLA MATRIX (2X2 ABIERTO) */
+    /* SECTOR DE ACCESO / MENÚ CRÍTICO CONSOLIDADO */
+    .menu-tactico-horizontal {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      margin-bottom: 8px;
+      width: 100%;
+    }
+    .btn-link-menu {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid #3f3f3e;
+      color: #a3a3a3;
+      padding: 5px 2px;
+      font-size: 0.58rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      flex-grow: 1;
+      text-align: center;
+      font-weight: bold;
+    }
+    .btn-link-menu:active {
+      border-color: #4ade80;
+      color: #4ade80;
+    }
+
+    /* MATRIX GRID: RECONSTRUCCIÓN FIJA DE 2 COLUMNAS X 2 FILAS */
     .grid-botones-tacticos {
       flex-grow: 1;
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
       padding-bottom: 8px;
     }
 
-    /* ARQUITECTURA CRÍTICA: LAS CAJAS DE LA IMAGEN NORTE SON BOTONES REALES */
+    /* CAJAS CONVERTIDAS EN ENLACES DE ACCIÓN TÁCTIL DIRECTA */
     .boton-nave {
       border: none;
       text-align: left;
-      padding: 12px;
+      padding: 10px;
       position: relative;
       cursor: pointer;
       display: flex;
@@ -174,7 +200,7 @@
       filter: brightness(0.9);
     }
 
-    /* TEXTURAS DE LOS SUMINISTROS (CARTÓN ROTADO Y CHAPA) */
+    /* ESTÉTICA PARCHE DE CARTÓN ASIMÉTRICO (IMAGEN NORTE) */
     .tipo-carton {
       background: #cdaf79;
       color: #21190e;
@@ -182,62 +208,79 @@
       border-left: 2px solid #b59663;
       border-bottom: 2px solid #9c7f52;
     }
-    .carton-angulo-1 { transform: rotate(-1.5deg); }
-    .carton-angulo-2 { transform: rotate(1.2deg); }
-    .carton-angulo-3 { transform: rotate(-0.8deg); }
+    .carton-angulo-1 { transform: rotate(-1deg); }
+    .carton-angulo-2 { transform: rotate(1deg); }
+    .carton-angulo-3 { transform: rotate(-0.5deg); }
 
+    /* ESTÉTICA BLOQUE DE CHAPA OXIDADA INDUSTRIAL */
     .tipo-chapa {
-      background: linear-gradient(135deg, #3d291f, #21140e);
-      border: 2px solid #4f392d;
+      background: linear-gradient(135deg, #422d22, #261710);
+      border: 2px solid #543d31;
       color: #ebd0c2;
       box-shadow: inset 0 0 10px rgba(0,0,0,0.7), 4px 4px 8px rgba(0,0,0,0.5);
     }
 
-    /* PARCHES DE CINTA DE EMBALAR INDUSTRIAL */
+    /* PARCHES DE CINTA ADHESIVA INDUSTRIAL */
     .cinta-adhesiva {
       position: absolute;
-      width: 50px;
-      height: 16px;
-      background: rgba(212, 175, 118, 0.4);
+      width: 45px;
+      height: 14px;
+      background: rgba(212, 175, 118, 0.45);
       backdrop-filter: blur(0.5px);
     }
-    .top-left { top: -6px; left: -10px; transform: rotate(-12deg); }
-    .top-right { top: -6px; right: -10px; transform: rotate(15deg); }
+    .top-left { top: -5px; left: -8px; transform: rotate(-12deg); }
+    .top-right { top: -5px; right: -8px; transform: rotate(15deg); }
 
-    /* REMACHES DE ACERO PARA LA CHAPA OXIDADA */
+    /* REMACHES METÁLICOS */
     .remache {
       position: absolute;
-      width: 5px;
-      height: 5px;
+      width: 4px;
+      height: 4px;
       background: #120b08;
       border-radius: 50%;
     }
     .tl { top: 4px; left: 4px; } .tr { top: 4px; right: 4px; }
     .bl { bottom: 4px; left: 4px; } .br { bottom: 4px; right: 4px; }
 
-    /* CONTENIDO INTERNO DE LOS BOTONES */
-    .prod-titulo { font-size: 0.95rem; font-weight: bold; text-transform: uppercase; line-height: 1.1; }
-    .prod-precio { font-size: 1.2rem; font-weight: bold; color: #1e6b36; margin-top: 2px; }
+    /* METADATOS INTERNOS DEL SUMINISTRO */
+    .prod-titulo { font-size: 0.85rem; font-weight: bold; text-transform: uppercase; line-height: 1.1; }
+    .prod-precio { font-size: 1.1rem; font-weight: bold; color: #1e6b36; margin-top: 1px; }
     .tipo-chapa .prod-precio { color: #4ade80; }
 
-    .meta-data { font-size: 0.65rem; line-height: 1.2; margin-top: auto; opacity: 0.9; }
+    .meta-data { font-size: 0.6rem; line-height: 1.2; margin-top: auto; opacity: 0.95; }
     
-    /* BADGES DE SEÑALIZACIÓN DE STOCK */
-    .status-badge { display: inline-block; font-size: 0.65rem; font-weight: bold; padding: 2px 5px; margin-top: 4px; text-transform: uppercase; }
+    /* CONTENEDORES INTERNOS DE SEÑALES (BADGES) */
+    .status-badge { display: inline-block; font-size: 0.58rem; font-weight: bold; padding: 1px 4px; margin-top: 2px; text-transform: uppercase; }
     .status-badge.rojo { color: #ef4444; border: 1px solid #ef4444; text-shadow: 0 0 4px rgba(239, 68, 68, 0.4); }
     .status-badge.verde { color: #166534; border: 1px solid #166534; }
     .tipo-chapa .status-badge.verde { color: #4ade80; border: 1px solid #4ade80; }
 
-    /* PANEL INFERIOR FIJO: CAJONES DE MADERA Y ACCESOS */
-    .panel-infraestructura { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 8px; height: 55px; }
-    .cajon-militar, .cajon-tapa, .cajon-arpillera { border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; font-size: 0.68rem; font-weight: bold; text-transform: uppercase; }
-    .cajon-militar { background: rgba(0,0,0,0.5); border: 1px solid #4ade80; color: #4ade80; }
+    /* INFRAESTRUCTURA DE CONTROL INFERIOR FIJA */
+    .panel-infraestructura {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 6px;
+      height: 48px;
+    }
+    .cajon-militar, .cajon-tapa, .cajon-arpillera {
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4px;
+      font-size: 0.62rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .cajon-militar { background: rgba(0,0,0,0.5); border: 1px solid #4ade80; color: #4ade80; font-size: 0.58rem; }
     .cajon-tapa { background: #544333; border: 2px double #362a1f; color: #d1bba7; }
     .cajon-arpillera { background: #7a654d; border: 1px dashed #47392b; color: #1f170f; }
     
-    /* BLOQUES DE ESTADO OPERATIVO */
-    .estado-pantalla { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f0f0e; color: #4ade80; font-size: 1.2rem; text-shadow: 0 0 8px #4ade80; gap: 15px; }
-    .error-badge { color: #ef4444; border: 1px dashed #ef4444; padding: 10px; font-size: 0.85rem; max-width: 80%; text-align: center; }
+    /* ENTORNO LOGÍSTICO Y CAPA DE BLOQUEO */
+    .estado-pantalla { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0f0f0e; color: #4ade80; font-size: 1.1rem; text-shadow: 0 0 8px #4ade80; gap: 12px; }
+    .error-badge { color: #ef4444; border: 1px dashed #ef4444; padding: 8px; font-size: 0.75rem; max-width: 85%; text-align: center; }
     .oculto { display: none !important; }
   </style>
 </head>
@@ -254,6 +297,13 @@
       <p class="subtitulo-militar">LABORATORIO URBANO & PROVISIONES DE BARRIO - RÍO GRANDE</p>
     </header>
 
+    <nav class="menu-tactico-horizontal">
+      <button class="btn-link-menu" onclick="alert('MÓDULO: LABORATORIO CULTIVO')">LAB. CULTIVO</button>
+      <button class="btn-link-menu" onclick="alert('MÓDULO: PARAFERNALIA DIARIA')">PARAFERNALIA</button>
+      <button class="btn-link-menu" onclick="alert('MÓDULO: KITS TÁCTICOS')">KITS TDF</button>
+      <button class="btn-link-menu" onclick="alert('MÓDULO: GEOLOCALIZACIÓN ENTREGA')">ENTREGAS</button>
+    </nav>
+
     <section class="consola-fusibles">
       <div class="placa-metalica">
         <span id="label-indoor" class="label-tactico neon-activo">CULTIVO INDOOR</span>
@@ -266,20 +316,20 @@
     </section>
 
     <div class="monitor-central">
-      <span>[STOCK MOSTRADOR - SUMINISTROS EN TIEMPO REAL]</span>
+      <span>[STOCK MOSTRADOR - TIEMPO REAL]</span>
     </div>
 
     <main id="contenedor-productos" class="grid-botones-tacticos">
       </main>
 
     <footer class="panel-infraestructura">
-      <button class="cajon-militar" onclick="alert('SISTEMA INTEGRADO NEXO ARQUETIPO OPERATIVO')">
-        [SISTEMA NEXO BABYLONIA]
+      <button class="cajon-militar" onclick="alert('[SISTEMA CENTRAL NEXO ARQUETIPO OPERATIVO]')">
+        [SISTEMA NEXO BABYLONIA - ESTABLE]
       </button>
-      <button class="cajon-tapa" onclick="alert('ACCESO A KITS DE GERMINACIÓN REGIONALES')">
+      <button class="cajon-tapa" onclick="alert('ABRIENDO RESERVA: KIT DE GERMINACIÓN TDF')">
         KIT GERMINACIÓN TDF
       </button>
-      <button class="cajon-arpillera" onClick="alert('MÓDULO DE SUSTRATO SELECCIONADO')">
+      <button class="cajon-arpillera" onClick="alert('ABRIENDO RESERVA: SUSTRATO PREM.')">
         SUSTRATO PREM.
       </button>
     </footer>
@@ -289,15 +339,15 @@
 
   <script>
     // ============================================================================
-    // ⚙️ ENLACE DE CREDENCIALES: INYECTÁ ACÁ TUS DATOS DE SUPABASE
+    // ⚙️ CONEXIÓN CRÍTICA DE DATOS: COLOCÁ TUS LLAVES REALES ACÁ ABAJO
     // ============================================================================
     const SUPABASE_URL = "TU_SUPABASE_URL_AQUÍ"; 
     const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY_AQUÍ";
 
-    // Inicialización del cliente global nativo
+    // Enlace nativo con el CDN de Supabase
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // selectores del DOM
+    // Mapeo de nodos del DOM
     const loader = document.getElementById('loader-reactor');
     const wrapper = document.getElementById('wrapper-nave');
     const contenedorProductos = document.getElementById('contenedor-productos');
@@ -308,13 +358,13 @@
 
     let sectorActual = 'cultivo_indoor';
 
-    // ⚡ CONSULTA DIRECTA Y SÍNCRONA DE DATOS
-    async function cargarNave() {
+    // EXTRACTOR CINÉTICO DE DATOS
+    async function ejecutarSincronizacion() {
       try {
         loader.classList.remove('oculto');
         wrapper.classList.add('oculto');
 
-        // Petición limpia a tu tabla sin desvíos raros
+        // Petición limpia filtrada por sector de negocio independiente
         const { data, error } = await supabaseClient
           .from('productos_babylonia')
           .select('id, titulo, precio, sku, stock_estado, origen, textura, tipo_visual')
@@ -322,46 +372,46 @@
 
         if (error) throw error;
 
-        // Limpiar el contenedor antes de inyectar los botones
+        // Limpieza de buffer visual
         contenedorProductos.innerHTML = '';
 
         if (data && data.length > 0) {
           data.forEach((prod, index) => {
             const boton = document.createElement('button');
             
-            // Determinamos si es chapa o cartón (Sayri fuerza chapa según el plano)
+            // Forzado estético: el segundo ítem (Sayri) asume textura chapa, el resto cartón asimétrico
             const tipoVisual = prod.tipo_visual || (index === 1 ? 'chapa' : 'carton');
             const anguloClase = `carton-angulo-${(index % 3) + 1}`;
             
             boton.className = `boton-nave ${tipoVisual === 'chapa' ? 'tipo-chapa' : `tipo-carton ${anguloClase}`}`;
             
-            // Configurar la acción táctil de envío directa
+            // Disparador de interacción nativa (Checkout de Nexo Arquetipo)
             boton.onclick = () => {
-              console.log(`Operación comercial iniciada para: ${prod.id}`);
-              const textoMensaje = `Hola Babylonia Glow, me interesa el producto: ${prod.titulo} (SKU: ${prod.sku})`;
-              window.open(`https://wa.me/5492964XXXXXX?text=${encodeURIComponent(textoMensaje)}`, '_blank');
+              console.log(`Enlace logístico activado en Río Grande para ID: ${prod.id}`);
+              const msj = `Hola Babylonia Glow, me interesa el suministro: ${prod.titulo} (SKU: ${prod.sku})`;
+              window.open(`https://wa.me/5492964XXXXXX?text=${encodeURIComponent(msj)}`, '_blank');
             };
 
-            // Inyección interna de componentes visuales (Cintas para cartón, remaches para chapa)
-            let adornosHTML = '';
+            // Inyección de apliques superficiales según textura (Cintas o pernos)
+            let apliquesHTML = '';
             if (tipoVisual === 'carton') {
-              const cintaLugar = index === 2 ? 'top-right' : 'top-left';
-              adornosHTML = `<div class="cinta-adhesiva ${cintaLugar}"></div>`;
+              const orientacionCinta = index === 2 ? 'top-right' : 'top-left';
+              apliquesHTML = `<div class="cinta-adhesiva ${orientacionCinta}"></div>`;
             } else if (tipoVisual === 'chapa') {
-              adornosHTML = `
+              apliquesHTML = `
                 <div class="remache tl"></div><div class="remache tr"></div>
                 <div class="remache bl"></div><div class="remache br"></div>
               `;
             }
 
-            const badgeColor = prod.stock_estado === 'BAJO STOCK' ? 'rojo' : 'verde';
+            const badgeClase = prod.stock_estado === 'BAJO STOCK' ? 'rojo' : 'verde';
 
             boton.innerHTML = `
-              ${adornosHTML}
+              ${apliquesHTML}
               <div class="prod-titulo">${prod.titulo}</div>
               <div class="prod-precio">$${prod.precio}</div>
               <div class="meta-data">
-                <span class="status-badge ${badgeColor}">${prod.stock_estado}</span>
+                <span class="status-badge ${badgeClase}">${prod.stock_estado}</span>
                 <br>
                 ORIGEN: ${prod.origen} / TEXTURA: ${prod.textura}
               </div>
@@ -370,25 +420,23 @@
             contenedorProductos.appendChild(boton);
           });
         } else {
-          // Contingencia si la tabla devuelve un array vacío
-          contenedorProductos.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:20px; color:#ef4444;">[ALERTA: VACÍO DE SUMINISTROS EN ESTE SECTOR]</div>`;
+          contenedorProductos.innerHTML = `<div style="grid-column: span 2; text-align:center; padding-top:30px; color:#ef4444; font-size:0.8rem;">[FALLO: ENTORNO SIN REGISTROS DE STOCK]</div>`;
         }
 
-        // Mostrar interfaz unificada
         loader.classList.add('oculto');
         wrapper.classList.remove('oculto');
 
       } catch (err) {
         console.error(err);
         loader.innerHTML = `
-          <span>[FALLO EN ENLACE SUPABASE]</span>
-          <div class="error-badge">LOG: ${err.message || 'Error de Red local'}</div>
-          <button style="background: #222; color: #4ade80; padding: 8px; border: 1px solid #4ade80; margin-top:15px; cursor: pointer;" onclick="cargarNave()">REINTENTAR ENLACE</button>
+          <span>[FALLO DE CONEXIÓN]</span>
+          <div class="error-badge">LOG: ${err.message || 'Error de enlace del servidor local'}</div>
+          <button style="background: #222; color: #4ade80; padding: 8px; border: 1px solid #4ade80; margin-top:15px; cursor: pointer; font-family:monospace;" onclick="ejecutarSincronizacion()">REINTENTAR SINCRO</button>
         `;
       }
     }
 
-    // INTERRUPTOR DE PALANCA: EVENTO DE CAMBIO DE ENTORNO
+    // LISTENER ANALÓGICO PARA EL INTERRUPTOR DE PALANCA
     switchSector.addEventListener('change', (e) => {
       if (e.target.checked) {
         sectorActual = 'smoke_shop';
@@ -399,13 +447,13 @@
         labelIndoor.className = 'label-tactico neon-activo';
         labelSmoke.className = 'label-tactico texto-gastado';
       }
-      cargarNave();
+      ejecutarSincronizacion();
     });
 
-    // CUMPLIMIENTO NATIVO MULTIMEDIA AL ARRANQUE
+    // ARRANQUE NATIVO DE INFRAESTRUCTURA MULTIMEDIA
     window.addEventListener('DOMContentLoaded', () => {
       if (audioNode) audioNode.muted = true;
-      cargarNave();
+      ejecutarSincronizacion();
     });
   </script>
 </body>
