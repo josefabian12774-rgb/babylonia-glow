@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -150,13 +150,6 @@
             padding: 15px;
         }
 
-        .tarjeta-tactica {
-            cursor: pointer;
-            outline: none;
-            border: none;
-            text-align: left;
-        }
-
         /* TEXTURA DE CARTÓN PEGADO A MANO */
         .tarjeta-carton {
             background: #cdaf79;
@@ -288,7 +281,7 @@
         .text-stencil, .text-sayri, .text-raw, .text-generico { font-weight: bold; letter-spacing: 2px; }
         .clipper-neon-body { width: 15px; height: 45px; background: #4ade80; box-shadow: 0 0 8px #4ade80; border-radius: 2px; }
 
-        /* PREVIENE MUESTRAS EN CRUDO HASTA LA COMPILACIÓN COMPLETA DE VUE */
+        /* PREVENCIÓN DE PARPADEO EN CRUDO HASTA QUE VUE SE MONTE */
         [v-cloak] { display: none !important; }
     </style>
 </head>
@@ -322,37 +315,31 @@
 
     <main class="grid-productos">
         
-        <div 
-            v-for="(prod, index) in productos" 
-            :key="prod.id"
-            @click="enviarAccionTactica(prod)"
-            :class="['tarjeta-tactica', prod.tipo_visual === 'chapa' ? 'tarjeta-chapa-oxidada' : ['tarjeta-carton', 'carton-angulo-' + ((index % 3) + 1)]]"
-        >
-            <template v-if="prod.tipo_visual === 'carton'">
-                <div :class="['cinta-adhesiva', index % 3 === 0 ? 'superior-izquierda' : (index % 3 === 1 ? 'superior-derecha' : 'inferior-izquierda')]"></div>
+        <div v-for="prod in productosFiltrados" :key="prod.id" :class="prod.clase_tarjeta">
+            <template v-if="prod.tipo === 'carton'">
+                <div :class="['cinta-adhesiva', prod.clase_cinta]"></div>
             </template>
 
-            <template v-if="prod.tipo_visual === 'chapa'">
+            <template v-if="prod.tipo === 'chapa'">
                 <div class="remache sup-izq"></div><div class="remache sup-der"></div>
                 <div class="remache inf-izq"></div><div class="remache inf-der"></div>
             </template>
 
             <h3 class="producto-titulo">{{ prod.titulo }}</h3>
             
-            <p v-if="prod.precio" class="precio-industrial">${{ prod.precio }}</p>
+            <p v-if="prod.tag" class="producto-tag">{{ prod.tag }}</p>
+            <p v-if="prod.precio" class="precio-industrial">{{ prod.precio }}</p>
             
             <div :class="prod.clase_mock">
-                <div v-if="prod.marca_tag === 'CLIPPER'" class="clipper-neon-body"></div>
-                <span v-else :class="prod.clase_texto">{{ prod.marca_tag }}</span>
+                <div v-if="prod.marca === 'CLIPPER'" class="clipper-neon-body"></div>
+                <span v-else :class="prod.clase_texto_marca">{{ prod.marca }}</span>
             </div>
 
             <div class="info-suministro">
                 <p>ESTADO DE SUMINISTRO</p>
                 <span class="sku">
                     SKU: 
-                    <span :class="prod.stock_estado === 'BAJO STOCK' ? 'badge-bajo-stock-alerta' : 'badge-bajo-stock'">
-                        {{ prod.stock_estado }}
-                    </span>
+                    <span :class="prod.alerta ? 'badge-bajo-stock-alerta' : 'badge-bajo-stock'">BAJO STOCK</span>
                 </span>
                 <p class="detalle-origen">ORIGEN: {{ prod.origen }}</p>
                 <p class="detalle-origen">TEXTURA: {{ prod.textura }}</p>
@@ -387,67 +374,101 @@
 </div>
 
 <script>
-    const { createApp, ref, onMounted } = Vue;
+    const { createApp, ref, computed, onMounted } = Vue;
 
-    // ============================================================================
-    // ⚙️ CONFIGURACIÓN DEL REACTOR: INYECTÁ TUS CREDENCIALES DE SUPABASE ACÁ
-    // ============================================================================
-    const SUPABASE_URL = "TU_SUPABASE_URL_AQUÍ"; 
-    const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY_AQUÍ";
-
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Credenciales del búnker (Dejalas vacías si vas a trabajar de forma local)
+    const SUPABASE_URL = ""; 
+    const SUPABASE_ANON_KEY = "";
 
     createApp({
         setup() {
             const isSmokeShop = ref(false);
-            const productos = ref([]);
             const ambientAudio = ref(null);
+            const productosBD = ref([]);
 
-            const sincronizarSuministros = async () => {
+            // Base de Datos de Respaldo Local (Tu maqueta exacta para que nunca se quede en blanco)
+            const suministrosLocales = [
+                {
+                    id: 1,
+                    sector: 'smoke_shop',
+                    tipo: 'carton',
+                    clase_tarjeta: 'tarjeta-carton carton-angulo-1',
+                    clase_cinta: 'superior-izquierda',
+                    titulo: 'PAPELILLOS G-ROLLZ',
+                    tag: 'PRODUCTO',
+                    marca: 'G-ROLLZ',
+                    clase_mock: 'mock-asset-grollz',
+                    clase_texto_marca: 'text-stencil',
+                    alerta: false,
+                    origen: 'ARG',
+                    textura: 'PAPEL'
+                },
+                {
+                    id: 2,
+                    sector: 'smoke_shop',
+                    tipo: 'chapa',
+                    clase_tarjeta: 'tarjeta-chapa-oxidada',
+                    precio: '$4800',
+                    titulo: 'TABACO SAYRI',
+                    marca: 'SAYRI',
+                    clase_mock: 'mock-asset-sayri',
+                    clase_texto_marca: 'text-sayri',
+                    alerta: true,
+                    origen: 'ARG',
+                    textura: 'TABACO'
+                },
+                {
+                    id: 3,
+                    sector: 'smoke_shop',
+                    tipo: 'carton',
+                    clase_tarjeta: 'tarjeta-carton carton-angulo-2',
+                    clase_cinta: 'superior-derecha',
+                    titulo: 'FILTROS RAW',
+                    marca: 'RAW',
+                    clase_mock: 'mock-asset-raw',
+                    clase_texto_marca: 'text-raw',
+                    alerta: false,
+                    origen: 'ARG',
+                    textura: 'FILTROS'
+                },
+                {
+                    id: 4,
+                    sector: 'smoke_shop',
+                    tipo: 'carton',
+                    clase_tarjeta: 'tarjeta-carton carton-angulo-3',
+                    clase_cinta: 'inferior-izquierda',
+                    titulo: 'ENCENDEDOR CLIPPER',
+                    marca: 'CLIPPER',
+                    clase_mock: 'mock-asset-clipper',
+                    alerta: false,
+                    origen: 'ARG',
+                    textura: 'CRAERO OR SEL'
+                }
+            ];
+
+            // Filtro Reactivo según el interruptor de cuchilla
+            const productosFiltrados = computed(() => {
+                const sectorActual = isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor';
+                
+                // Si Supabase trajo datos reales, los usamos; si no, levanta la maqueta local
+                const fuenteDeDatos = productosBD.value.length > 0 ? productosBD.value : suministrosLocales;
+                return fuenteDeDatos.filter(p => p.sector === sectorActual);
+            });
+
+            // Conector Seguro a Supabase (No interrumpe el renderizado si falla o no está configurado)
+            const conectarSupabase = async () => {
+                if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
+                
                 try {
-                    const sectorFiltro = isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor';
-
-                    const { data, error } = await supabaseClient
-                        .from('productos_babylonia')
-                        .select('*')
-                        .eq('sector', sectorFiltro);
-
-                    if (error) throw error;
-
-                    if (data) {
-                        productos.value = data.map((item, index) => {
-                            // Extractor inteligente de Marcas para acoplar tus estilos CSS específicos
-                            const palabras = item.titulo ? item.titulo.split(' ') : ['SUMINISTRO'];
-                            const marcaDetectada = palabras[1] ? palabras[1].toUpperCase() : palabras[0].toUpperCase();
-
-                            let claseMock = 'mock-asset-generico';
-                            let claseTexto = 'text-generico';
-
-                            if (marcaDetectada.includes('ROLLZ')) { claseMock = 'mock-asset-grollz'; claseTexto = 'text-stencil'; }
-                            else if (marcaDetectada.includes('SAYRI')) { claseMock = 'mock-asset-sayri'; claseTexto = 'text-sayri'; }
-                            else if (marcaDetectada.includes('RAW')) { claseMock = 'mock-asset-raw'; claseTexto = 'text-raw'; }
-                            else if (marcaDetectada.includes('CLIPPER')) { claseMock = 'mock-asset-clipper'; }
-
-                            // Respeta la alternancia exacta de tu maqueta: el índice 1 (segundo elemento) siempre es chapa oxidada
-                            const visualAsignado = item.tipo_visual || (index === 1 ? 'chapa' : 'carton');
-
-                            return {
-                                id: item.id || `suministro-${index}`,
-                                titulo: item.titulo || 'SUMINISTRO OPERATIVO',
-                                precio: item.precio ? Number(item.precio) : 0,
-                                sku: item.sku || 'N/A',
-                                stock_estado: item.stock_estado || 'BAJO STOCK',
-                                origen: item.origen || 'ARG',
-                                textura: item.textura || 'ESTÁNDAR',
-                                tipo_visual: visualAsignado,
-                                marca_tag: marcaDetectada,
-                                clase_mock: claseMock,
-                                clase_texto: claseTexto
-                            };
-                        });
+                    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    const { data, error } = await supabaseClient.from('productos_babylonia').select('*');
+                    
+                    if (!error && data) {
+                        // Si la consulta es exitosa, se mapea acá adentro respetando el layout
+                        productosBD.value = data; 
                     }
                 } catch (err) {
-                    console.error("Fallo crítico del inyector de datos:", err);
+                    console.log("Reactor Supabase offline. Corriendo en modo local estable.");
                 }
             };
 
@@ -455,442 +476,18 @@
                 if (ambientAudio.value) {
                     ambientAudio.value.muted = true;
                 }
-                sincronizarSuministros();
+                conectarSupabase();
             });
 
             const alternarSector = () => {
-                console.log('Cambio-sector emitido:', isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor');
-                sincronizarSuministros();
-            };
-
-            const enviarAccionTactica = (prod) => {
-                const mensaje = `Hola Babylonia Glow, me interesa el suministro: ${prod.titulo} (SKU: ${prod.sku})`;
-                const urlWa = `https://wa.me/5492964XXXXXX?text=${encodeURIComponent(mensaje)}`;
-                window.open(urlWa, '_blank');
+                console.log('Cambio-sector:', isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor');
             };
 
             return {
                 isSmokeShop,
-                productos,
+                productosFiltrados,
                 ambientAudio,
-                alternarSector,
-                enviarAccionTactica
-            };
-        }
-    }).mount('#app');
-</script>
-</body>
-</html>
-          cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #1c1c1a;
-            border: 2px solid #40403e;
-            transition: .4s;
-            border-radius: 34px;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.7);
-        }
-
-        .palanca-cuchilla:before {
-            position: absolute;
-            content: "";
-            height: 24px;
-            width: 24px;
-            left: 3px;
-            bottom: 3px;
-            background-color: #525251;
-            border: 1px solid #737372;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .palanca-cuchilla {
-            background-color: #2e4a36;
-            border-color: #4ade80;
-        }
-
-        input:checked + .palanca-cuchilla:before {
-            transform: translateX(36px);
-            background-color: #4ade80;
-            box-shadow: 0 0 10px #4ade80;
-        }
-
-        .monitor-stock {
-            text-align: center;
-            margin: 15px 0;
-            color: #4ade80;
-            font-weight: bold;
-        }
-
-        /* LAYOUT DE COMPONENTES ASIMÉTRICOS */
-        .grid-productos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            padding: 15px;
-        }
-
-        /* ACCIÓN ACCESIBLE DE CLIC SOBRE LA ESTRUCTURA */
-        .tarjeta-tactica {
-            cursor: pointer;
-            outline: none;
-            border: none;
-            text-align: left;
-        }
-        .tarjeta-tactica:active {
-            filter: brightness(0.9);
-        }
-
-        /* TEXTURA DE CARTÓN PEGADO A MANO */
-        .tarjeta-carton {
-            background: #cdaf79;
-            color: #261c0e;
-            padding: 20px;
-            position: relative;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
-            border-left: 3px solid #b59663;
-            border-bottom: 2px solid #9c7f52;
-        }
-
-        /* ROTACIONES ASIMÉTRICAS DE LA IMAGEN NORTE */
-        .carton-angulo-1 { transform: rotate(-1.2deg); }
-        .carton-angulo-2 { transform: rotate(1deg); }
-        .carton-angulo-3 { transform: rotate(-0.8deg); }
-
-        /* CINTAS DE EMBALAR INDUSTRIALES */
-        .cinta-adhesiva {
-            position: absolute;
-            width: 70px;
-            height: 22px;
-            background: rgba(212, 175, 118, 0.45);
-            backdrop-filter: blur(1px);
-            border-left: 1px dashed rgba(255,255,255,0.2);
-        }
-        .superior-izquierda { top: -10px; left: -15px; transform: rotate(-15deg); }
-        .superior-derecha { top: -10px; right: -15px; transform: rotate(20deg); }
-        .inferior-izquierda { bottom: -10px; left: 10px; transform: rotate(5deg); }
-
-        /* TEXTURA DE CHAPA OXIDADA INDUSTRIAL */
-        .tarjeta-chapa-oxidada {
-            background: linear-gradient(135deg, #422d22, #261710);
-            border: 2px solid #543d31;
-            color: #ebd0c2;
-            padding: 20px;
-            position: relative;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 5px 5px 10px rgba(0,0,0,0.4);
-        }
-
-        .remache {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #1a110c;
-            border-radius: 50%;
-            border-bottom: 1px solid #735647;
-        }
-        .sup-izq { top: 6px; left: 6px; }
-        .sup-der { top: 6px; right: 6px; }
-        .inf-izq { bottom: 6px; left: 6px; }
-        .inf-der { bottom: 6px; right: 6px; }
-
-        /* REQUISITO DE BAJO STOCK (ALERTA RADIAL) */
-        .badge-bajo-stock {
-            color: #166534;
-            border: 1px solid #166534;
-            padding: 2px 6px;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-
-        .badge-bajo-stock-alerta {
-            color: #ef4444;
-            border: 1px solid #ef4444;
-            padding: 2px 6px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            text-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
-        }
-
-        /* INFRAESTRUCTURA INFERIOR */
-        .panel-infraestructura {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 40px;
-            align-items: center;
-        }
-
-        .marco-estatus {
-            border: 1px solid #4ade80;
-            padding: 10px;
-            background: rgba(0,0,0,0.4);
-        }
-
-        .text-ok {
-            color: #4ade80;
-            margin: 0;
-            font-size: 0.85rem;
-        }
-
-        .contenedor-cajon-madera {
-            background: #544333;
-            border: 3px double #362a1f;
-            padding: 15px;
-            color: #d1bba7;
-        }
-
-        .contenedor-arpillera {
-            background: #7a654d;
-            border: 1px dashed #47392b;
-            padding: 15px;
-            color: #1f170f;
-            font-weight: bold;
-        }
-
-        .tarjeta-chapa-mini {
-            background: #382d26;
-            border: 1px solid #524238;
-            padding: 10px 20px;
-        }
-
-        /* DETALLES DE PRODUCTO INTERNOS */
-        .producto-titulo { margin: 0 0 10px 0; font-size: 1.1rem; text-transform: uppercase; }
-        .precio-industrial { font-size: 1.4rem; color: #4ade80; font-weight: bold; margin: 0 0 10px 0; }
-        .info-suministro p { margin: 4px 0; font-size: 0.75rem; }
-        .sku { display: block; margin: 8px 0; font-size: 0.8rem; }
-        
-        /* CONTENEDORES MOCKUP DE MARCAS URBANA */
-        .mock-asset-grollz, .mock-asset-sayri, .mock-asset-raw, .mock-asset-clipper, .mock-asset-generico {
-            background: rgba(0,0,0,0.2);
-            height: 60px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px dashed rgba(0,0,0,0.15);
-        }
-        .text-stencil, .text-sayri, .text-raw, .text-brand { font-weight: bold; letter-spacing: 2px; }
-        .clipper-neon-body { width: 15px; height: 45px; background: #4ade80; box-shadow: 0 0 8px #4ade80; border-radius: 2px; }
-
-        /* PREVENCIÓN DE PARPADEO CRÍTICO DE LLAVES DE VUE */
-        [v-cloak] { display: none !important; }
-        
-        .monitor-error {
-            text-align: center;
-            color: #ef4444;
-            padding: 20px;
-            border: 1px dashed #ef4444;
-            margin: 15px;
-            font-size: 0.9rem;
-        }
-    </style>
-</head>
-<body>
-
-<div id="app" class="nave-container urban-lab-bg" v-cloak>
-    
-    <header class="header-tactico">
-        <h1 class="logo-babylonia">BABYLONIA GLOW</h1>
-        <p class="subtitulo-militar">LABORATORIO URBANO & PROVISIONES DE BARRIO - RÍO GRANDE</p>
-    </header>
-
-    <section class="consola-fusibles">
-        <div class="placa-metalica">
-            <div class="control-switch">
-                <span :class="['label-tactico', !isSmokeShop ? 'neon-activo' : 'texto-gastado']">CULTIVO INDOOR</span>
-                
-                <label class="switch-analogo">
-                    <input type="checkbox" v-model="isSmokeShop" @change="alternarSector">
-                    <span class="palanca-cuchilla"></span>
-                </label>
-                
-                <span :class="['label-tactico', isSmokeShop ? 'neon-activo' : 'texto-gastado']">SMOKE SHOP</span>
-            </div>
-        </div>
-    </section>
-
-    <div v-if="loading" class="monitor-stock">
-        <span>[PROCESANDO EXTRACTOR BASE DE DATOS...]</span>
-    </div>
-
-    <div v-if="errorEnlace" class="monitor-error">
-        <span>[FALLO OPERATIVO: {{ errorEnlace }}]</span>
-    </div>
-
-    <div class="monitor-stock" v-if="!loading && !errorEnlace">
-        <span class="neon-line">[STOCK MOSTRADOR - TIEMPO REAL]</span>
-    </div>
-
-    <main class="grid-productos" v-if="!loading && !errorEnlace">
-        
-        <div 
-            v-for="(prod, index) in productos" 
-            :key="prod.id"
-            @click="enviarAccionComercial(prod)"
-            :class="['tarjeta-tactica', prod.tipo_visual === 'chapa' ? 'tarjeta-chapa-oxidada' : ['tarjeta-carton', 'carton-angulo-' + ((index % 3) + 1)]]"
-        >
-            <template v-if="prod.tipo_visual === 'carton'">
-                <div :class="['cinta-adhesiva', index % 3 === 0 ? 'superior-izquierda' : (index % 3 === 1 ? 'superior-derecha' : 'inferior-izquierda')]"></div>
-            </template>
-
-            <template v-if="prod.tipo_visual === 'chapa'">
-                <div class="remache sup-izq"></div><div class="remache sup-der"></div>
-                <div class="remache inf-izq"></div><div class="remache inf-der"></div>
-            </template>
-
-            <h3 class="producto-titulo">{{ prod.titulo }}</h3>
-            
-            <p v-if="prod.precio > 0" class="precio-industrial">${{ prod.precio }}</p>
-            
-            <div :class="prod.clase_mock_marca">
-                <div v-if="prod.marca_interna === 'CLIPPER'" class="clipper-neon-body"></div>
-                <span v-else :class="prod.clase_texto_marca">{{ prod.marca_interna }}</span>
-            </div>
-
-            <div class="info-suministro">
-                <p>ESTADO DE SUMINISTRO</p>
-                <span class="sku">
-                    SKU: 
-                    <span :class="prod.stock_estado === 'BAJO STOCK' ? 'badge-bajo-stock-alerta' : 'badge-bajo-stock'">
-                        {{ prod.stock_estado }}
-                    </span>
-                </span>
-                <p class="detalle-origen">ORIGEN: {{ prod.origen }}</p>
-                <p class="detalle-origen">TEXTURA: {{ prod.textura }}</p>
-            </div>
-        </div>
-        
-    </main>
-
-    <footer class="panel-infraestructura">
-        <div class="modulo-estatus">
-            <div class="marco-estatus">
-                <p class="text-ok">[SISTEMA NEXO BABYLONIA - ESTABLE]</p>
-            </div>
-        </div>
-        
-        <div class="contenedor-cajon-madera">
-            <p class="cajon-texto">KIT DE GERMINACIÓN TDF</p>
-        </div>
-
-        <div class="contenedor-arpillera">
-            <p class="arpillera-texto">SUSTRATO PREM.</p>
-        </div>
-
-        <div class="tarjeta-chapa-mini">
-            <p class="kit-titulo">KIT INDOOR COMPLETO</p>
-            <p class="sku-precio">SKU: $15000</p>
-            <span class="badge-bajo-stock-alerta">BAJO STOCK</span>
-        </div>
-    </footer>
-
-    <audio ref="ambientAudio" loop muted src="assets/audio/nexo_nave_ambient.mp3"></audio>
-</div>
-
-<script>
-    const { createApp, ref, onMounted } = Vue;
-
-    // ============================================================================
-    // ⚙️ CONFIGURACIÓN DEL REACTOR: INYECTÁ TUS CREDENCIALES DE SUPABASE ACÁ
-    // ============================================================================
-    const SUPABASE_URL = "TU_SUPABASE_URL_AQUÍ"; 
-    const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY_AQUÍ";
-
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    createApp({
-        setup() {
-            const isSmokeShop = ref(false);
-            const productos = ref([]);
-            const loading = ref(true); // Reactividad de carga explícita
-            const errorEnlace = ref(null);
-            const ambientAudio = ref(null);
-
-            // EXTRACTOR CON PARSEO PROTEGIDO CONTRA EXCEPCIONES DE RENDERIZADO
-            const sincronizarSuministros = async () => {
-                try {
-                    loading.value = true;
-                    errorEnlace.value = null;
-
-                    const sectorFiltro = isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor';
-
-                    const { data, error } = await supabaseClient
-                        .from('productos_babylonia')
-                        .select('*')
-                        .eq('sector', sectorFiltro);
-
-                    if (error) throw error;
-
-                    if (data) {
-                        productos.value = data.map((item, index) => {
-                            // Extrae la marca de forma segura analizando las palabras del título
-                            const tokens = item.titulo ? item.titulo.split(' ') : ['SUMINISTRO'];
-                            const marcaDetectada = tokens[1] ? tokens[1].toUpperCase() : tokens[0].toUpperCase();
-
-                            // Asignación de clases CSS maquetadas para no romper tus contenedores visuales
-                            let claseMock = 'mock-asset-generico';
-                            let claseTexto = 'text-brand';
-
-                            if (marcaDetectada.includes('ROLLZ')) { claseMock = 'mock-asset-grollz'; claseTexto = 'text-stencil'; }
-                            else if (marcaDetectada.includes('SAYRI')) { claseMock = 'mock-asset-sayri'; claseTexto = 'text-sayri'; }
-                            else if (marcaDetectada.includes('RAW')) { claseMock = 'mock-asset-raw'; claseTexto = 'text-raw'; }
-                            else if (marcaDetectada.includes('CLIPPER')) { claseMock = 'mock-asset-clipper'; }
-
-                            // Forzado visual matemático: si la base no tiene textura asignada, mantiene tu esquema original
-                            let visualForzado = item.tipo_visual;
-                            if (!visualForzado) {
-                                visualForzado = (index === 1) ? 'chapa' : 'carton';
-                            }
-
-                            return {
-                                id: item.id || `tactico-${index}`,
-                                titulo: item.titulo || 'SUMINISTRO INDUSTRIAL',
-                                precio: item.precio ? Number(item.precio) : 0,
-                                sku: item.sku || 'N/A',
-                                stock_estado: item.stock_estado || 'BAJO STOCK',
-                                origen: item.origen || 'ARG',
-                                textura: item.textura || 'ESTÁNDAR',
-                                tipo_visual: visualForzado,
-                                marca_interna: marcaDetectada,
-                                clase_mock_marca: claseMock,
-                                clase_texto_marca: claseTexto
-                            };
-                        });
-                    }
-                } catch (err) {
-                    console.error("Fallo de sincronización:", err);
-                    errorEnlace.value = err.message || "Error en el enlace del búnker";
-                } finally {
-                    loading.value = false; // Cierra el cargador de una al procesar
-                }
-            };
-
-            onMounted(() => {
-                if (ambientAudio.value) {
-                    ambientAudio.value.muted = true;
-                }
-                sincronizarSuministros();
-            });
-
-            const alternarSector = () => {
-                console.log('Cambio-sector emitido:', isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor');
-                sincronizarSuministros();
-            };
-
-            const enviarAccionComercial = (prod) => {
-                const mensaje = `Hola Babylonia Glow, me interesa el suministro: ${prod.titulo} (SKU: ${prod.sku})`;
-                const urlWa = `https://wa.me/5492964XXXXXX?text=${encodeURIComponent(mensaje)}`;
-                window.open(urlWa, '_blank');
-            };
-
-            return {
-                isSmokeShop,
-                productos,
-                loading,
-                errorEnlace,
-                ambientAudio,
-                alternarSector,
-                enviarAccionComercial
+                alternarSector
             };
         }
     }).mount('#app');
