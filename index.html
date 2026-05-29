@@ -2,401 +2,83 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BABYLONIA GLOW - PROTOCOLO E.U.L.</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BABYLONIA GLOW - CORE UI</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
-        /* ============================================================================
-           🎨 RECONSTRUCCIÓN FIEL A LA INTERFAZ ORIGINAL (IMAGEN 5)
-           ============================================================================ */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --neon: #4ade80; --cardboard: #cdaf79; --metal: #242422; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Courier Prime', monospace; background: #1a1a1a; }
 
-        body {
-            background-color: #1a1a1a;
-            /* Fondo de concreto gastado con el mapa urbano de fondo */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('https://images.unsplash.com/photo-1589939705384-5185137a7f0f?q=80&w=1200');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #e2e8f0;
-            font-family: 'Courier Prime', monospace;
-            padding: 20px 10px;
-            min-height: 100vh;
-        }
-
-        /* CONTENEDOR PRINCIPAL CON CAÑERÍAS INDUSTRIALES INTERNAS */
-        .contenedor-nave {
-            max-width: 500px;
-            margin: 0 auto;
-            position: relative;
-            border-left: 4px solid #3a3a3a;
-            border-right: 4px solid #222;
+        /* Contenedor Base - Cemento Industrial */
+        .bunker-root {
+            height: 100vh; width: 100vw;
+            background: #2a2a2a; /* Textura base */
+            display: grid;
+            grid-template-rows: auto 1fr auto;
             padding: 10px;
-        }
-
-        /* HEADER GRAFFITI / NEÓN VERDE GASTADO */
-        .header-industrial {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .logo-graffiti {
-            font-size: 2.8rem;
-            color: #4ade80;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            font-family: 'Arial Black', sans-serif;
-            text-shadow: 0 0 10px rgba(74, 222, 128, 0.8), 2px 2px 2px #000;
-            filter: blur(0.3px);
-        }
-
-        .subtitulo-militar {
-            font-size: 0.65rem;
-            color: #d4d4d8;
-            letter-spacing: 1px;
-            margin-top: 5px;
-            text-shadow: 1px 1px 1px #000;
-        }
-
-        /* CONSOLA DE SWITCHES METÁLICOS EN 3D */
-        .panel-switches {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            background: rgba(30, 30, 30, 0.85);
-            border: 2px solid #444;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 25px;
-            box-shadow: inset 0 0 15px #000, 3px 3px 10px rgba(0,0,0,0.6);
-        }
-
-        .control-switch {
-            display: flex;
-            align-items: center;
             gap: 10px;
-            font-size: 0.8rem;
-            font-weight: bold;
         }
 
-        /* El interruptor físico estilo palanca */
-        .switch-fisco {
-            width: 50px;
-            height: 26px;
-            background: #111;
-            border-radius: 15px;
+        /* Botón Reactivo Industrial */
+        .btn-industrial {
+            background: var(--cardboard);
             border: 2px solid #555;
-            position: relative;
-            box-shadow: inset 0 3px 5px rgba(0,0,0,0.8);
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 5px; text-align: center; font-size: 10px; text-transform: uppercase;
         }
+        .btn-industrial:active { transform: scale(0.95); box-shadow: inset 5px 5px 10px rgba(0,0,0,0.5); }
 
-        .perilla-metalica {
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(#999, #444);
-            border-radius: 50%;
-            position: absolute;
-            top: 1px;
-            left: 2px;
-            border: 1px solid #777;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.6);
-        }
-
-        /* Switch derecho simulado como activo */
-        .switch-activo .perilla-metalica {
-            left: auto;
-            right: 2px;
-            background: linear-gradient(#4ade80, #166534);
-        }
-
-        /* MARQUESINA DE CARTÓN ADHESIVA */
-        .marquesina-carton {
-            background: #b59663;
-            color: #1f170f;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 3px 3px 8px rgba(0,0,0,0.5);
-            transform: rotate(-0.5deg);
-            margin-bottom: 25px;
-            border: 1px solid #9c7f52;
-            position: relative;
-        }
-
-        /* LAYOUT GENERAL: MENÚ LATERAL + PRODUCTOS */
-        .bloque-interactivo {
+        /* Grilla del Arsenal - Sin Scroll */
+        .grid-arsenal {
             display: grid;
-            grid-template-columns: 110px 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
         }
 
-        /* MENÚ LATERAL DE REBABA DE CARTÓN */
-        .menu-industrial {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .boton-rebaba {
-            background: #a18253;
-            color: #1f170f;
-            padding: 8px 5px;
-            font-size: 0.65rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            border: none;
-            border-left: 4px solid #7c6239;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
-            transform: rotate(-2deg);
-            text-align: left;
-        }
-
-        /* LISTA DE MATERIALES / SUMINISTROS */
-        .contenedor-productos {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* TARJETAS DE CARTÓN REALISTA (CORTADO A MANO) */
-        .tarjeta-carton-real {
-            background-color: #cdaf79;
-            background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 0);
-            background-size: 4px 4px;
-            color: #261c0e;
-            padding: 15px;
-            position: relative;
-            box-shadow: 4px 4px 10px rgba(0,0,0,0.6);
-            border-bottom: 3px solid #8f744b;
-            border-right: 2px solid #a38556;
-        }
-
-        .carton-1 { transform: rotate(-1deg); }
-        .carton-2 { transform: rotate(1.2deg); margin-left: 2px; }
-        .carton-3 { transform: rotate(-0.8deg); }
-
-        /* PEDAZOS DE CINTA DE EMBALAR ADHESIVA */
-        .pedazo-cinta {
-            position: absolute;
-            background: rgba(222, 184, 135, 0.55);
-            backdrop-filter: blur(1px);
-            height: 18px;
-            width: 65px;
-            border-left: 1px dashed rgba(255,255,255,0.3);
-            border-right: 1px dashed rgba(255,255,255,0.3);
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-        }
-        .cinta-top-left { top: -8px; left: -10px; transform: rotate(-20deg); }
-        .cinta-top-right { top: -8px; right: -12px; transform: rotate(25deg); }
-        .cinta-bot-left { bottom: -8px; left: 15px; transform: rotate(5deg); }
-
-        /* TARJETA DE CHAPA OXIDADA PESADA */
-        .tarjeta-chapa-real {
-            background: linear-gradient(135deg, #3d281c, #1f120a);
-            border: 2px solid #4a3326;
-            color: #f7e6dc;
-            padding: 15px;
-            position: relative;
-            box-shadow: inset 0 0 12px #000, 4px 4px 8px rgba(0,0,0,0.5);
-        }
-
-        /* REMACHES DE CHAPA */
-        .remache-tornillo {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background: #110a06;
-            border-radius: 50%;
-            box-shadow: 0 1px 1px #6e4e3b;
-        }
-        .r-tl { top: 5px; left: 5px; }
-        .r-tr { top: 5px; right: 5px; }
-        .r-bl { bottom: 5px; left: 5px; }
-        .r-br { bottom: 5px; right: 5px; }
-
-        /* DETALLES DE TEXTO INTERNOS DE LAS TARJETAS */
-        .prod-nombre {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .prod-sub {
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            opacity: 0.8;
-        }
-        .prod-meta {
-            font-size: 0.75rem;
-            margin-top: 5px;
-        }
-
-        /* PRECIOS RESALTADOS EN VERDE NEÓN DE LA IMAGEN 5 */
-        .precio-tag {
-            font-size: 1.3rem;
-            color: #4ade80;
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(74, 222, 128, 0.4), 1px 1px 1px #000;
-            margin-top: 8px;
-        }
-
-        /* ALERTA DE STOCK EN CHAPA */
-        .alerta-chapa-stock {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: #b91c1c;
-            color: #fff;
-            font-size: 0.55rem;
-            font-weight: bold;
-            padding: 2px 4px;
-            transform: rotate(8deg);
-            box-shadow: 1px 1px 3px #000;
-        }
-
-        /* INFRAESTRUCTURA INFERIOR: CAJONES Y ARPILLERA */
-        .footer-infraestructura {
-            margin-top: 30px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .caja-madera {
-            background: #4a3b2c;
-            border: 3px double #292017;
-            padding: 10px;
-            color: #cfbfb0;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
-        }
-
-        .bolsa-arpillera {
-            background: #6e5944;
-            border: 1px dashed #3d3023;
-            padding: 10px;
-            color: #1c140c;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 3px 3px 6px rgba(0,0,0,0.4);
-        }
-
-        .marco-estable {
-            grid-column: span 2;
-            border: 1px solid #4ade80;
-            padding: 8px;
-            text-align: center;
-            background: rgba(0,0,0,0.5);
-            color: #4ade80;
-            font-size: 0.75rem;
-        }
+        /* Estética de Chapa/Cartón */
+        .card-chapa { background: var(--metal); border: 2px solid #444; color: #fff; }
+        
+        .header-ui { color: var(--neon); text-align: center; font-size: 20px; text-shadow: 0 0 5px var(--neon); }
+        .footer-ui { display: flex; justify-content: space-between; align-items: center; color: var(--neon); }
     </style>
 </head>
 <body>
 
-<div class="contenedor-nave">
-    
-    <header class="header-industrial">
-        <h1 class="logo-graffiti">BABYLONIA GLOW</h1>
-        <p class="subtitulo-militar">LABORATORIO URBANO & PROVISIONES DE BARRIO - RÍO GRANDE</p>
-    </header>
+<div id="app" class="bunker-root">
+    <header class="header-ui">BABYLONIA GLOW</header>
 
-    <section class="panel-switches">
-        <div class="control-switch">
-            <span>CULTIVO INDOOR</span>
-            <div class="switch-fisco"><div class="perilla-metalica"></div></div>
-        </div>
-        <div class="control-switch">
-            <span>SMOKE SHOP</span>
-            <div class="switch-fisco switch-activo"><div class="perilla-metalica"></div></div>
-        </div>
-    </section>
-
-    <div class="marquesina-carton">
-        <p>[STOCK MOSTRADOR - TIEMPO REAL]</p>
-        <p>[ESTADO SUMINISTROS: ESTABLE]</p>
-    </div>
-
-    <div class="bloque-interactivo">
+    <main class="grid-arsenal">
+        <button class="btn-industrial" @click="accion('PAPELILLOS')">PAPELILLOS G-ROLLZ</button>
+        <button class="btn-industrial card-chapa" @click="accion('TABACO')">TABACO SAYRI</button>
+        <button class="btn-industrial" @click="accion('FILTROS')">FILTROS RAW</button>
+        <button class="btn-industrial" @click="accion('CLIPPER')">ENCENDEDOR CLIPPER</button>
         
-        <nav class="menu-industrial">
-            <button class="boton-rebaba">INICIO</button>
-            <button class="boton-rebaba">LABORATORIO CULTIVO</button>
-            <button class="boton-rebaba">PARAFERNALIA DIARIA</button>
-            <button class="boton-rebaba">KITS TÁCTICOS (TDF)</button>
-            <button class="boton-rebaba">GEOLOCALIZACIÓN ENTREGA</button>
-        </nav>
+        <button class="btn-industrial card-chapa" @click="accion('PICADOR')">PICADOR TÁCTICO</button>
+        <button class="btn-industrial" @click="accion('GERMINACION')">KIT GERMINACIÓN</button>
+        <button class="btn-industrial" @click="accion('SUSTRATO')">SUSTRATO PREM.</button>
+        <button class="btn-industrial card-chapa" @click="accion('KIT_INDOOR')">KIT INDOOR</button>
+    </main>
 
-        <main class="contenedor-productos">
-            
-            <div class="tarjeta-carton-real carton-1">
-                <div class="pedazo-cinta cinta-top-left"></div>
-                <div class="pedazo-cinta cinta-top-right"></div>
-                <h3 class="prod-nombre">Papelillos G-Rollz</h3>
-                <p class="prod-sub">PRODUCTO</p>
-                <div class="prod-meta">ESTADO DE SUMINISTRO</div>
-                <div class="prod-meta">SKU: IND-01</div>
-                <div class="prod-meta">Origen: ARG</div>
-                <p class="precio-tag">$2500</p>
-            </div>
-
-            <div class="tarjeta-carton-real carton-2">
-                <div class="pedazo-cinta cinta-top-right"></div>
-                <div class="pedazo-cinta cinta-bot-left"></div>
-                <h3 class="prod-nombre">Filtros Raw</h3>
-                <p class="prod-sub">PRODUCTO</p>
-                <div class="prod-meta">ESTADO DE SUMINISTRO</div>
-                <div class="prod-meta">SKU: IND-02</div>
-                <div class="prod-meta">Origen: ARG</div>
-                <p class="precio-tag">$2500</p>
-            </div>
-
-            <div class="tarjeta-carton-real carton-3">
-                <div class="pedazo-cinta cinta-top-left"></div>
-                <h3 class="prod-nombre">Encendedor Clipper</h3>
-                <p class="prod-sub">PRODUCTO</p>
-                <div class="prod-meta">ESTADO DE SUMINISTRO</div>
-                <div class="prod-meta">SKU: IND-03</div>
-                <div class="prod-meta">Origen: ARG</div>
-                <p class="precio-tag">$2500</p>
-            </div>
-
-            <div class="tarjeta-chapa-real">
-                <div class="remache-tornillo r-tl"></div><div class="remache-tornillo r-tr"></div>
-                <div class="remache-tornillo r-bl"></div><div class="remache-tornillo r-br"></div>
-                <span class="alerta-chapa-stock">BAJO STOCK</span>
-                <h3 class="prod-nombre">Tabaco Sayri</h3>
-                <p class="prod-sub">PRODUCTO</p>
-                <div class="prod-meta">ESTADO DE SUMINISTRO</div>
-                <div class="prod-meta">SKU: IND-04</div>
-                <div class="prod-meta">Origen: ARG</div>
-                <p class="precio-tag">$4800</p>
-            </div>
-
-        </main>
-    </div>
-
-    <footer class="footer-infraestructura">
-        <div class="caja-madera">
-            <p>KIT DE GERMINACIÓN TDF</p>
-        </div>
-        <div class="bolsa-arpillera">
-            <p>SUSTRATO PREM.</p>
-        </div>
-        <div class="marco-stable">
-            <p>[SISTEMA NEXO BABYLONIA - ESTABLE]</p>
-        </div>
+    <footer class="footer-ui">
+        <div @click="accion('STATUS')">[SISTEMA ESTABLE]</div>
+        <div @click="accion('WHATSAPP')">⚡ REPORTE</div>
     </footer>
-
 </div>
 
+<script>
+    const { createApp, ref } = Vue;
+    createApp({
+        setup() {
+            const accion = (tipo) => {
+                console.log('Interacción física detectada:', tipo);
+                // Aquí podés disparar las funciones síncronas de la nave
+            };
+            return { accion };
+        }
+    }).mount('#app');
+</script>
 </body>
 </html>
