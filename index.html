@@ -190,7 +190,6 @@
         }
         .superior-izquierda { top: -10px; left: -15px; transform: rotate(-15deg); }
         .superior-derecha { top: -10px; right: -15px; transform: rotate(20deg); }
-        .inferior-izquierda { bottom: -10px; left: 10px; transform: rotate(5deg); }
 
         /* TEXTURA DE CHAPA OXIDADA INDUSTRIAL */
         .tarjeta-chapa-oxidada {
@@ -291,7 +290,7 @@
             justify-content: center;
             border: 1px dashed rgba(0,0,0,0.15);
         }
-        .text-stencil, .text-sayri, .text-raw { font-weight: bold; letter-spacing: 2px; }
+        .text-stencil { font-weight: bold; letter-spacing: 2px; }
         
         /* MONITORES OPERATIVOS AUXILIARES */
         .estado-error-reactor {
@@ -360,7 +359,7 @@
             <p class="precio-industrial">${{ prod.precio }}</p>
             
             <div class="mock-asset-central">
-                <span class="text-stencil">{{ prod.titulo.split(' ')[1] || 'SUMINISTRO' }}</span>
+                <span class="text-stencil">{{ prod.marca_tag }}</span>
             </div>
             
             <div class="info-suministro">
@@ -418,11 +417,10 @@
         setup() {
             const isSmokeShop = ref(false);
             const productos = ref([]);
-            const loading = ref(true);
+            const loading = ref(true); // <--- DECLARADA CORRECTAMENTE COMO REACTIVA
             const errorReactor = ref(null);
             const ambientAudio = ref(null);
 
-            // FUNCIÓN EXTRACTORA DE DATOS SINCRONIZADA
             const sincronizarSuministros = async () => {
                 try {
                     loading.value = true;
@@ -432,24 +430,28 @@
 
                     const { data, error } = await supabaseClient
                         .from('productos_babylonia')
-                        .select('id, titulo, precio, sku, stock_estado, origen, textura, tipo_visual')
+                        .select('*')
                         .eq('sector', sectorFiltro);
 
                     if (error) throw error;
 
                     if (data) {
-                        // Procesamos los datos respetando la asimetría visual original
-                        productos.value = data.map((item, index) => ({
-                            id: item.id,
-                            titulo: item.titulo,
-                            precio: Number(item.precio),
-                            sku: item.sku,
-                            stock_estado: item.stock_estado || 'STOCK OK',
-                            origen: item.origen || 'ARG',
-                            textura: item.textura || 'ESTÁNDAR',
-                            // Forzado: si la base no dice nada, el segundo elemento es chapa, el resto cartón
-                            tipo_visual: item.tipo_visual || (index === 1 ? 'chapa' : 'carton')
-                        }));
+                        productos.value = data.map((item, index) => {
+                            const palabras = item.titulo ? item.titulo.split(' ') : ['SUMINISTRO'];
+                            const marcaSegura = palabras[1] ? palabras[1] : palabras[0];
+
+                            return {
+                                id: item.id || `prod-${index}-${Date.now()}`,
+                                titulo: item.titulo || 'SUMINISTRO ANÓNIMO',
+                                precio: item.precio ? Number(item.precio) : 0,
+                                sku: item.sku || 'N/A',
+                                stock_estado: item.stock_estado || 'STOCK OK',
+                                origen: item.origen || 'ARG',
+                                textura: item.textura || 'ESTÁNDAR',
+                                tipo_visual: item.tipo_visual || (index === 1 ? 'chapa' : 'carton'),
+                                marca_tag: marcaSegura.toUpperCase()
+                            };
+                        });
                     }
                 } catch (err) {
                     console.error("Error crítico de base de datos:", err);
@@ -463,7 +465,6 @@
                 if (ambientAudio.value) {
                     ambientAudio.value.muted = true;
                 }
-                // Disparo de carga inicial al montar el chasis
                 sincronizarSuministros();
             });
 
@@ -472,7 +473,6 @@
                 sincronizarSuministros();
             };
 
-            // ACCIÓN COMERCIAL: REDIRECCIÓN DIRECTA A WHATSAPP
             const enviarAccionTactica = (prod) => {
                 const mensaje = `Hola Babylonia Glow, me interesa el suministro: ${prod.titulo} (SKU: ${prod.sku})`;
                 const urlWa = `https://wa.me/5492964XXXXXX?text=${encodeURIComponent(mensaje)}`;
