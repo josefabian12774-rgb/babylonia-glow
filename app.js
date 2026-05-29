@@ -2,7 +2,7 @@ const SUPABASE_URL = "https://manaejtcurxbcsozqcsh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_LTZY6uMVRCnd_K41dneBtw_xn3XU0ke";
 const SLUG_NAVE = "babylonia";
 
-async function arrancarReactor() {
+async function sincronizarBunker() {
     try {
         const url = SUPABASE_URL + "/rest/v1/naves?perfil_slug=eq." + SLUG_NAVE;
         const response = await fetch(url, {
@@ -19,29 +19,32 @@ async function arrancarReactor() {
 
         const content = data[0].content;
 
-        // Inyectar datos dinámicos manteniendo intacta la maqueta rústica
-        document.getElementById('babylonia-title').innerText = content.header?.title || "BABYLONIA GLOW";
-        
+        // Renderizado del Catálogo dentro de los contenedores industriales
         const grid = document.getElementById('contenedor-productos');
         if (grid && content.catalogo?.productos) {
             grid.innerHTML = content.catalogo.productos.map(prod => `
-                <div class="producto-card">
-                    <h3>` + prod.name + `</h3>
-                    <span class="precio-tag">$` + prod.precio_venta + `</span>
-                    ` + (prod.stock <= 3 ? `<span class="alerta-stock">BAJO STOCK (` + prod.stock + `)</span>` : '') + `
+                <div class="card-suministro">
+                    <div>
+                        <h3>` + prod.name + `</h3>
+                        <div class="card-meta">Origen: ARG | Suministro</div>
+                    </div>
+                    <div>
+                        <span class="card-precio">$` + prod.precio_venta + `</span>
+                        ` + (prod.stock <= 3 ? `<span class="badge-suministro">Bajo Stock (` + prod.stock + `)</span>` : '') + `
+                    </div>
                 </div>
             `).join('');
         }
 
-        // Enlace táctico de WhatsApp dinámico si existe en el JSONB
-        const wsBtn = document.getElementById('ws-link');
-        if (wsBtn && content.tenant_info?.whatsapp) {
-            wsBtn.href = "https://wa.me/" + content.tenant_info.whatsapp;
+        // Sincronización del enlace seguro de WhatsApp
+        const linkWs = document.getElementById('ws-link');
+        if (linkWs && content.tenant_info?.whatsapp) {
+            linkWs.href = "https://wa.me/" + content.tenant_info.whatsapp;
         }
 
     } catch (err) {
-        console.error("Fallo de sincronización:", err);
+        console.error("Fallo crítico de enlace táctico:", err);
     }
 }
 
-window.onload = arrancarReactor;
+window.onload = sincronizarBunker;
