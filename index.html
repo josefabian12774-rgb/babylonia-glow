@@ -151,16 +151,15 @@
             padding: 15px;
         }
 
-        /* ACCIÓN ACCESIBLE PARA LAS TARJETAS */
-        .tarjeta-clickeable {
+        /* ACCIÓN ACCESIBLE DE CLIC SOBRE LA ESTRUCTURA */
+        .tarjeta-tactica {
             cursor: pointer;
+            outline: none;
             border: none;
             text-align: left;
-            outline: none;
         }
-        .tarjeta-clickeable:active {
+        .tarjeta-tactica:active {
             filter: brightness(0.9);
-            transform: scale(0.99);
         }
 
         /* TEXTURA DE CARTÓN PEGADO A MANO */
@@ -190,6 +189,7 @@
         }
         .superior-izquierda { top: -10px; left: -15px; transform: rotate(-15deg); }
         .superior-derecha { top: -10px; right: -15px; transform: rotate(20deg); }
+        .inferior-izquierda { bottom: -10px; left: 10px; transform: rotate(5deg); }
 
         /* TEXTURA DE CHAPA OXIDADA INDUSTRIAL */
         .tarjeta-chapa-oxidada {
@@ -281,7 +281,7 @@
         .sku { display: block; margin: 8px 0; font-size: 0.8rem; }
         
         /* CONTENEDORES MOCKUP DE MARCAS URBANA */
-        .mock-asset-central {
+        .mock-asset-grollz, .mock-asset-sayri, .mock-asset-raw, .mock-asset-clipper, .mock-asset-generico {
             background: rgba(0,0,0,0.2);
             height: 60px;
             margin: 10px 0;
@@ -290,21 +290,25 @@
             justify-content: center;
             border: 1px dashed rgba(0,0,0,0.15);
         }
-        .text-stencil { font-weight: bold; letter-spacing: 2px; }
+        .text-stencil, .text-sayri, .text-raw, .text-brand { font-weight: bold; letter-spacing: 2px; }
+        .clipper-neon-body { width: 15px; height: 45px; background: #4ade80; box-shadow: 0 0 8px #4ade80; border-radius: 2px; }
+
+        /* PREVENCIÓN DE PARPADEO CRÍTICO DE LLAVES DE VUE */
+        [v-cloak] { display: none !important; }
         
-        /* MONITORES OPERATIVOS AUXILIARES */
-        .estado-error-reactor {
+        .monitor-error {
             text-align: center;
-            padding: 30px;
             color: #ef4444;
+            padding: 20px;
             border: 1px dashed #ef4444;
-            margin: 20px;
+            margin: 15px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-<div id="app" class="nave-container urban-lab-bg">
+<div id="app" class="nave-container urban-lab-bg" v-cloak>
     
     <header class="header-tactico">
         <h1 class="logo-babylonia">BABYLONIA GLOW</h1>
@@ -326,28 +330,28 @@
         </div>
     </section>
 
-    <div v-if="loading" class="monitor-stock" style="color: #4ade80;">
+    <div v-if="loading" class="monitor-stock">
         <span>[PROCESANDO EXTRACTOR BASE DE DATOS...]</span>
     </div>
 
-    <div v-if="errorReactor" class="estado-error-reactor">
-        <p>[FALLO CRÍTICO DE ENLACE: {{ errorReactor }}]</p>
+    <div v-if="errorEnlace" class="monitor-error">
+        <span>[FALLO OPERATIVO: {{ errorEnlace }}]</span>
     </div>
 
-    <div class="monitor-stock" v-if="!loading">
+    <div class="monitor-stock" v-if="!loading && !errorEnlace">
         <span class="neon-line">[STOCK MOSTRADOR - TIEMPO REAL]</span>
     </div>
 
-    <main class="grid-productos" v-if="!loading && !errorReactor">
+    <main class="grid-productos" v-if="!loading && !errorEnlace">
         
         <div 
             v-for="(prod, index) in productos" 
             :key="prod.id"
-            @click="enviarAccionTactica(prod)"
-            :class="['tarjeta-clickeable', prod.tipo_visual === 'chapa' ? 'tarjeta-chapa-oxidada' : ['tarjeta-carton', 'carton-angulo-' + ((index % 3) + 1)]]"
+            @click="enviarAccionComercial(prod)"
+            :class="['tarjeta-tactica', prod.tipo_visual === 'chapa' ? 'tarjeta-chapa-oxidada' : ['tarjeta-carton', 'carton-angulo-' + ((index % 3) + 1)]]"
         >
             <template v-if="prod.tipo_visual === 'carton'">
-                <div :class="['cinta-adhesiva', index % 2 === 0 ? 'superior-izquierda' : 'superior-derecha']"></div>
+                <div :class="['cinta-adhesiva', index % 3 === 0 ? 'superior-izquierda' : (index % 3 === 1 ? 'superior-derecha' : 'inferior-izquierda')]"></div>
             </template>
 
             <template v-if="prod.tipo_visual === 'chapa'">
@@ -356,12 +360,14 @@
             </template>
 
             <h3 class="producto-titulo">{{ prod.titulo }}</h3>
-            <p class="precio-industrial">${{ prod.precio }}</p>
             
-            <div class="mock-asset-central">
-                <span class="text-stencil">{{ prod.marca_tag }}</span>
+            <p v-if="prod.precio > 0" class="precio-industrial">${{ prod.precio }}</p>
+            
+            <div :class="prod.clase_mock_marca">
+                <div v-if="prod.marca_interna === 'CLIPPER'" class="clipper-neon-body"></div>
+                <span v-else :class="prod.clase_texto_marca">{{ prod.marca_interna }}</span>
             </div>
-            
+
             <div class="info-suministro">
                 <p>ESTADO DE SUMINISTRO</p>
                 <span class="sku">
@@ -417,14 +423,15 @@
         setup() {
             const isSmokeShop = ref(false);
             const productos = ref([]);
-            const loading = ref(true); // <--- DECLARADA CORRECTAMENTE COMO REACTIVA
-            const errorReactor = ref(null);
+            const loading = ref(true); // Reactividad de carga explícita
+            const errorEnlace = ref(null);
             const ambientAudio = ref(null);
 
+            // EXTRACTOR CON PARSEO PROTEGIDO CONTRA EXCEPCIONES DE RENDERIZADO
             const sincronizarSuministros = async () => {
                 try {
                     loading.value = true;
-                    errorReactor.value = null;
+                    errorEnlace.value = null;
 
                     const sectorFiltro = isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor';
 
@@ -437,27 +444,45 @@
 
                     if (data) {
                         productos.value = data.map((item, index) => {
-                            const palabras = item.titulo ? item.titulo.split(' ') : ['SUMINISTRO'];
-                            const marcaSegura = palabras[1] ? palabras[1] : palabras[0];
+                            // Extrae la marca de forma segura analizando las palabras del título
+                            const tokens = item.titulo ? item.titulo.split(' ') : ['SUMINISTRO'];
+                            const marcaDetectada = tokens[1] ? tokens[1].toUpperCase() : tokens[0].toUpperCase();
+
+                            // Asignación de clases CSS maquetadas para no romper tus contenedores visuales
+                            let claseMock = 'mock-asset-generico';
+                            let claseTexto = 'text-brand';
+
+                            if (marcaDetectada.includes('ROLLZ')) { claseMock = 'mock-asset-grollz'; claseTexto = 'text-stencil'; }
+                            else if (marcaDetectada.includes('SAYRI')) { claseMock = 'mock-asset-sayri'; claseTexto = 'text-sayri'; }
+                            else if (marcaDetectada.includes('RAW')) { claseMock = 'mock-asset-raw'; claseTexto = 'text-raw'; }
+                            else if (marcaDetectada.includes('CLIPPER')) { claseMock = 'mock-asset-clipper'; }
+
+                            // Forzado visual matemático: si la base no tiene textura asignada, mantiene tu esquema original
+                            let visualForzado = item.tipo_visual;
+                            if (!visualForzado) {
+                                visualForzado = (index === 1) ? 'chapa' : 'carton';
+                            }
 
                             return {
-                                id: item.id || `prod-${index}-${Date.now()}`,
-                                titulo: item.titulo || 'SUMINISTRO ANÓNIMO',
+                                id: item.id || `tactico-${index}`,
+                                titulo: item.titulo || 'SUMINISTRO INDUSTRIAL',
                                 precio: item.precio ? Number(item.precio) : 0,
                                 sku: item.sku || 'N/A',
-                                stock_estado: item.stock_estado || 'STOCK OK',
+                                stock_estado: item.stock_estado || 'BAJO STOCK',
                                 origen: item.origen || 'ARG',
                                 textura: item.textura || 'ESTÁNDAR',
-                                tipo_visual: item.tipo_visual || (index === 1 ? 'chapa' : 'carton'),
-                                marca_tag: marcaSegura.toUpperCase()
+                                tipo_visual: visualForzado,
+                                marca_interna: marcaDetectada,
+                                clase_mock_marca: claseMock,
+                                clase_texto_marca: claseTexto
                             };
                         });
                     }
                 } catch (err) {
-                    console.error("Error crítico de base de datos:", err);
-                    errorReactor.value = err.message || "Fallo de comunicación en Río Grande";
+                    console.error("Fallo de sincronización:", err);
+                    errorEnlace.value = err.message || "Error en el enlace del búnker";
                 } finally {
-                    loading.value = false;
+                    loading.value = false; // Cierra el cargador de una al procesar
                 }
             };
 
@@ -473,7 +498,7 @@
                 sincronizarSuministros();
             };
 
-            const enviarAccionTactica = (prod) => {
+            const enviarAccionComercial = (prod) => {
                 const mensaje = `Hola Babylonia Glow, me interesa el suministro: ${prod.titulo} (SKU: ${prod.sku})`;
                 const urlWa = `https://wa.me/5492964XXXXXX?text=${encodeURIComponent(mensaje)}`;
                 window.open(urlWa, '_blank');
@@ -483,10 +508,10 @@
                 isSmokeShop,
                 productos,
                 loading,
-                errorReactor,
+                errorEnlace,
                 ambientAudio,
                 alternarSector,
-                enviarAccionTactica
+                enviarAccionComercial
             };
         }
     }).mount('#app');
