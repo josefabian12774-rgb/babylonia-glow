@@ -3,25 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Babylonia Glow</title>
+    <title>BABYLONIA GLOW - Panel Táctico</title>
     <style>
-        body { margin: 0; padding: 20px; font-family: monospace; transition: background 0.3s, color 0.3s; }
-        header { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 25px; }
-        #contenedor-productos { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .producto-card { padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        /* CSS ORIENTADO AL DISEÑO URBANO INDUSTRIAL */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #2b2b28; /* Aquí podés meter tu imagen de fondo de concreto */
+            color: #fff;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        /* CONTENEDOR PRINCIPAL: INTERFAZ DE COMANDO */
+        .interfaz-bunker {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 20px;
+        }
+
+        /* MENÚ DE ENLACE LATERAL IZQUIERDO */
+        .menu-tactico {
+            text-transform: uppercase;
+            font-size: 16px;
+            line-height: 2;
+            padding-top: 40px;
+        }
+        .menu-tactico div {
+            margin-bottom: 15px;
+            cursor: pointer;
+            text-shadow: 1px 1px 2px #000;
+        }
+        .menu-tactico div:hover {
+            color: #4ade80;
+        }
+
+        /* PANEL CENTRAL CON INTERRUPTORES Y STOCK */
+        .panel-operaciones {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* CABECERA: LOGO URBANO */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        header h1 {
+            font-size: 42px;
+            color: #4ade80;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(74,222,128,0.6), 2px 2px #000;
+            text-transform: uppercase;
+        }
+        header p {
+            font-size: 11px;
+            margin: 5px 0;
+            color: #ccc;
+            text-transform: uppercase;
+        }
+
+        /* SELECTORES (SWITCHES DE PALANCA) */
+        .controles-palanca {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .switch-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            text-shadow: 1px 1px #000;
+        }
+
+        /* GRILLA DE PRODUCTOS ESTILO CARTÓN / CHAPA */
+        #contenedor-productos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        /* TARJETAS TÁCTICAS (SIMULACIÓN DE TEXTURAS) */
+        .producto-card {
+            background: #d1c2a5; /* Color base cartón */
+            color: #2b2b28;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 3px 3px 0px #000;
+            position: relative;
+            transform: rotate(-1deg); /* Efecto pegado a mano */
+        }
+        .producto-card:nth-child(even) {
+            transform: rotate(1deg);
+            background: #8b7355; /* Variante chapa/óxido */
+            color: #fff;
+        }
+        .producto-card h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            text-transform: uppercase;
+            border-bottom: 1px dashed rgba(0,0,0,0.2);
+            padding-bottom: 5px;
+        }
+        .precio-tag {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .alerta-stock {
+            background: #dc2626;
+            color: #fff;
+            font-size: 9px;
+            padding: 2px 4px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            text-transform: uppercase;
+        }
+
+        /* BOTÓN AGENTE DE ENLACE (WHATSAPP) */
+        .btn-whatsapp {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(74,222,128,0.3);
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1 id="babylonia-title">Cargando Sincronización...</h1>
-        <p id="babylonia-subtitle"></p>
-    </header>
+    <div class="interfaz-bunker">
+        
+        <aside class="menu-tactico">
+            <div>Inicio</div>
+            <div>Laboratorio Cultivo</div>
+            <div>Parafernalia Diaria</div>
+            <div>Kits Tácticos (TDF)</div>
+            <div>Geolocalización Entrega</div>
+            <div style="font-size: 10px; color: #4ade80; margin-top: 50px;">[SISTEMA NEXO STABLE]</div>
+        </aside>
 
-    <main id="contenedor-productos">
-        </main>
+        <section class="panel-operaciones">
+            <header>
+                <h1 id="babylonia-title">BABYLONIA GLOW</h1>
+                <p id="babylonia-subtitle">Laboratorio Urbano & Provisiones de Barrio - Río Grande</p>
+            </header>
+
+            <div class="controles-palanca">
+                <div class="switch-item">CULTIVO INDOOR 🔘</div>
+                <div class="switch-item">SMOKE SHOP 🔘</div>
+            </div>
+
+            <div id="contenedor-productos">
+                </div>
+        </section>
+
+    </div>
+
+    <a href="#" class="btn-whatsapp" id="ws-link">Agente de Enlace - Reporte Coordenadas 💬</a>
 
     <script src="app.js"></script>
 </body>
 </html>
-
