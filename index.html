@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
     <style>
         /* ============================================================================
@@ -17,7 +16,6 @@
            ============================================================================ */
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* FUENTES Y COMPORTAMIENTO CRÍTICO URBANO */
         .urban-lab-bg {
             min-height: 100vh;
             background: radial-gradient(circle at 50% 50%, rgba(30, 30, 28, 0.9), rgba(15, 15, 14, 1)),
@@ -29,7 +27,6 @@
             overflow-x: hidden;
         }
 
-        /* EFECTOS DE LUZ RADIONAVE (VERDE NEÓN) */
         .logo-babylonia {
             font-size: 3rem;
             color: #4ade80;
@@ -49,7 +46,6 @@
             margin-top: 5px;
         }
 
-        /* CONSOLA DE FUSIBLES Y SWITCH ANALÓGICO */
         .consola-fusibles {
             display: flex;
             justify-content: center;
@@ -85,7 +81,6 @@
             color: #525252;
         }
 
-        /* REDISEÑO COMPLETO DEL SWITCH A INTERRUPTOR DE CUCHILLA */
         .switch-analogo {
             position: relative;
             display: inline-block;
@@ -142,7 +137,6 @@
             font-weight: bold;
         }
 
-        /* LAYOUT DE COMPONENTES ASIMÉTRICOS */
         .grid-productos {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -150,7 +144,7 @@
             padding: 15px;
         }
 
-        /* TEXTURA DE CARTÓN PEGADO A MANO */
+        /* TEXTURAS VISUALES MAQUETA */
         .tarjeta-carton {
             background: #cdaf79;
             color: #261c0e;
@@ -161,12 +155,10 @@
             border-bottom: 2px solid #9c7f52;
         }
 
-        /* ROTACIONES ASIMÉTRICAS DE LA IMAGEN NORTE */
         .carton-angulo-1 { transform: rotate(-1.2deg); }
         .carton-angulo-2 { transform: rotate(1deg); }
         .carton-angulo-3 { transform: rotate(-0.8deg); }
 
-        /* CINTAS DE EMBALAR INDUSTRIALES */
         .cinta-adhesiva {
             position: absolute;
             width: 70px;
@@ -179,7 +171,6 @@
         .superior-derecha { top: -10px; right: -15px; transform: rotate(20deg); }
         .inferior-izquierda { bottom: -10px; left: 10px; transform: rotate(5deg); }
 
-        /* TEXTURA DE CHAPA OXIDADA INDUSTRIAL */
         .tarjeta-chapa-oxidada {
             background: linear-gradient(135deg, #422d22, #261710);
             border: 2px solid #543d31;
@@ -202,7 +193,6 @@
         .inf-izq { bottom: 6px; left: 6px; }
         .inf-der { bottom: 6px; right: 6px; }
 
-        /* REQUISITO DE BAJO STOCK (ALERTA RADIAL) */
         .badge-bajo-stock {
             color: #166534;
             border: 1px solid #166534;
@@ -220,7 +210,6 @@
             text-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
         }
 
-        /* INFRAESTRUCTURA INFERIOR */
         .panel-infraestructura {
             display: flex;
             flex-wrap: wrap;
@@ -262,14 +251,12 @@
             padding: 10px 20px;
         }
 
-        /* DETALLES DE PRODUCTO INTERNOS */
         .producto-titulo { margin: 0 0 10px 0; font-size: 1.1rem; text-transform: uppercase; }
         .precio-industrial { font-size: 1.4rem; color: #4ade80; font-weight: bold; margin: 0 0 10px 0; }
         .info-suministro p { margin: 4px 0; font-size: 0.75rem; }
         .sku { display: block; margin: 8px 0; font-size: 0.8rem; }
         
-        /* CONTENEDORES MOCKUP DE MARCAS URBANA */
-        .mock-asset-grollz, .mock-asset-sayri, .mock-asset-raw, .mock-asset-clipper, .mock-asset-generico {
+        .mock-asset-grollz, .mock-asset-sayri, .mock-asset-raw, .mock-asset-clipper {
             background: rgba(0,0,0,0.2);
             height: 60px;
             margin: 10px 0;
@@ -278,10 +265,10 @@
             justify-content: center;
             border: 1px dashed rgba(0,0,0,0.15);
         }
-        .text-stencil, .text-sayri, .text-raw, .text-generico { font-weight: bold; letter-spacing: 2px; }
+        .text-stencil, .text-sayri, .text-raw { font-weight: bold; letter-spacing: 2px; }
         .clipper-neon-body { width: 15px; height: 45px; background: #4ade80; box-shadow: 0 0 8px #4ade80; border-radius: 2px; }
 
-        /* PREVENCIÓN DE PARPADEO EN CRUDO HASTA QUE VUE SE MONTE */
+        /* Evita parpadeos raros mientras Vue termina de montarse */
         [v-cloak] { display: none !important; }
     </style>
 </head>
@@ -300,7 +287,7 @@
                 <span :class="['label-tactico', !isSmokeShop ? 'neon-activo' : 'texto-gastado']">CULTIVO INDOOR</span>
                 
                 <label class="switch-analogo">
-                    <input type="checkbox" v-model="isSmokeShop" @change="alternarSector">
+                    <input type="checkbox" v-model="isSmokeShop">
                     <span class="palanca-cuchilla"></span>
                 </label>
                 
@@ -315,7 +302,8 @@
 
     <main class="grid-productos">
         
-        <div v-for="prod in productosFiltrados" :key="prod.id" :class="prod.clase_tarjeta">
+        <div v-for="prod in suministrosFiltrados" :key="prod.id" :class="prod.clase_tarjeta">
+            
             <template v-if="prod.tipo === 'carton'">
                 <div :class="['cinta-adhesiva', prod.clase_cinta]"></div>
             </template>
@@ -326,7 +314,6 @@
             </template>
 
             <h3 class="producto-titulo">{{ prod.titulo }}</h3>
-            
             <p v-if="prod.tag" class="producto-tag">{{ prod.tag }}</p>
             <p v-if="prod.precio" class="precio-industrial">{{ prod.precio }}</p>
             
@@ -337,8 +324,7 @@
 
             <div class="info-suministro">
                 <p>ESTADO DE SUMINISTRO</p>
-                <span class="sku">
-                    SKU: 
+                <span class="sku">SKU: 
                     <span :class="prod.alerta ? 'badge-bajo-stock-alerta' : 'badge-bajo-stock'">BAJO STOCK</span>
                 </span>
                 <p class="detalle-origen">ORIGEN: {{ prod.origen }}</p>
@@ -376,18 +362,13 @@
 <script>
     const { createApp, ref, computed, onMounted } = Vue;
 
-    // Credenciales del búnker (Dejalas vacías si vas a trabajar de forma local)
-    const SUPABASE_URL = ""; 
-    const SUPABASE_ANON_KEY = "";
-
     createApp({
         setup() {
-            const isSmokeShop = ref(false);
+            const isSmokeShop = ref(true); // Arranca activo en Smoke Shop como tu maqueta inicial
             const ambientAudio = ref(null);
-            const productosBD = ref([]);
 
-            // Base de Datos de Respaldo Local (Tu maqueta exacta para que nunca se quede en blanco)
-            const suministrosLocales = [
+            // Datos estables integrados en el core del script
+            const inventarioLocal = [
                 {
                     id: 1,
                     sector: 'smoke_shop',
@@ -446,48 +427,21 @@
                 }
             ];
 
-            // Filtro Reactivo según el interruptor de cuchilla
-            const productosFiltrados = computed(() => {
-                const sectorActual = isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor';
-                
-                // Si Supabase trajo datos reales, los usamos; si no, levanta la maqueta local
-                const fuenteDeDatos = productosBD.value.length > 0 ? productosBD.value : suministrosLocales;
-                return fuenteDeDatos.filter(p => p.sector === sectorActual);
+            const suministrosFiltrados = computed(() => {
+                const sectorObjetivo = isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor';
+                return inventarioLocal.filter(p => p.sector === sectorObjetivo);
             });
-
-            // Conector Seguro a Supabase (No interrumpe el renderizado si falla o no está configurado)
-            const conectarSupabase = async () => {
-                if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
-                
-                try {
-                    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    const { data, error } = await supabaseClient.from('productos_babylonia').select('*');
-                    
-                    if (!error && data) {
-                        // Si la consulta es exitosa, se mapea acá adentro respetando el layout
-                        productosBD.value = data; 
-                    }
-                } catch (err) {
-                    console.log("Reactor Supabase offline. Corriendo en modo local estable.");
-                }
-            };
 
             onMounted(() => {
                 if (ambientAudio.value) {
                     ambientAudio.value.muted = true;
                 }
-                conectarSupabase();
             });
-
-            const alternarSector = () => {
-                console.log('Cambio-sector:', isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor');
-            };
 
             return {
                 isSmokeShop,
-                productosFiltrados,
-                ambientAudio,
-                alternarSector
+                suministrosFiltrados,
+                ambientAudio
             };
         }
     }).mount('#app');
