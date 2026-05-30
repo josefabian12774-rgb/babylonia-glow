@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BABYLONIA GLOW - PROTOCOLO E.U.L.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,26 +11,23 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
     <style>
-        /* ============================================================================
-           🎨 DIRECTIVA HOJA DE ESTILOS: EXTREME URBAN LAB (IMAGEN NORTE)
-           ============================================================================ */
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* FUENTES Y COMPORTAMIENTO CRÍTICO URBANO */
         .urban-lab-bg {
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             background: radial-gradient(circle at 50% 50%, rgba(30, 30, 28, 0.9), rgba(15, 15, 14, 1)),
                         repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
             color: #e2e8f0;
-            padding: 20px;
+            padding: 10px;
             font-family: 'Courier Prime', monospace;
             position: relative;
-            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* EFECTOS DE LUZ RADIONAVE (VERDE NEÓN) */
         .logo-babylonia {
-            font-size: 3rem;
+            font-size: clamp(1.8rem, 6vw, 3rem);
             color: #4ade80;
             text-align: center;
             text-transform: uppercase;
@@ -42,22 +39,21 @@
 
         .subtitulo-militar {
             text-align: center;
-            font-size: 0.75rem;
+            font-size: clamp(0.55rem, 1.5vw, 0.75rem);
             color: #a3a3a3;
             letter-spacing: 2px;
-            margin-top: 5px;
+            margin-top: 2px;
         }
 
-        /* CONSOLA DE FUSIBLES Y SWITCH ANALÓGICO */
         .consola-fusibles {
             display: flex;
             justify-content: center;
-            margin: 25px 0;
+            margin: 10px 0;
         }
 
         .placa-metalica {
             background: #242422;
-            padding: 15px 30px;
+            padding: 10px 15px;
             border: 2px solid #3f3f3e;
             box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.8), 4px 4px 0px rgba(0, 0, 0, 0.3);
             border-radius: 4px;
@@ -66,219 +62,129 @@
         .control-switch {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
         }
 
         .label-tactico {
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 0.8rem;
             transition: all 0.3s ease;
         }
 
-        .neon-activo {
-            color: #4ade80;
-            text-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
-        }
+        .neon-activo { color: #4ade80; text-shadow: 0 0 8px rgba(74, 222, 128, 0.7); }
+        .texto-gastado { color: #525252; }
 
-        .texto-gastado {
-            color: #525252;
-        }
-
-        /* REDISEÑO COMPLETO DEL SWITCH A INTERRUPTOR DE CUCHILLA */
-        .switch-analogo {
-            position: relative;
-            display: inline-block;
-            width: 70px;
-            height: 34px;
-        }
-
-        .switch-analogo input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .switch-analogo { position: relative; display: inline-block; width: 45px; height: 22px; }
+        .switch-analogo input { opacity: 0; width: 0; height: 0; }
 
         .palanca-cuchilla {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #1c1c1a;
-            border: 2px solid #40403e;
-            transition: .4s;
-            border-radius: 34px;
-            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.7);
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #1c1c1a; border: 2px solid #40403e; transition: .4s;
+            border-radius: 22px; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.7);
         }
 
         .palanca-cuchilla:before {
-            position: absolute;
-            content: "";
-            height: 24px;
-            width: 24px;
-            left: 3px;
-            bottom: 3px;
-            background-color: #525251;
-            border: 1px solid #737372;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            transition: .4s;
-            border-radius: 50%;
+            position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px;
+            background-color: #525251; border: 1px solid #737372; box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            transition: .4s; border-radius: 50%;
         }
 
-        input:checked + .palanca-cuchilla {
-            background-color: #2e4a36;
-            border-color: #4ade80;
-        }
-
-        input:checked + .palanca-cuchilla:before {
-            transform: translateX(36px);
-            background-color: #4ade80;
-            box-shadow: 0 0 10px #4ade80;
-        }
+        input:checked + .palanca-cuchilla { background-color: #2e4a36; border-color: #4ade80; }
+        input:checked + .palanca-cuchilla:before { transform: translateX(23px); background-color: #4ade80; box-shadow: 0 0 10px #4ade80; }
 
         .monitor-stock {
             text-align: center;
-            margin: 15px 0;
+            margin: 5px 0;
             color: #4ade80;
             font-weight: bold;
+            font-size: 0.7rem;
         }
 
-        /* LAYOUT DE COMPONENTES ASIMÉTRICOS */
         .grid-productos {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            padding: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            flex-grow: 1;
+            align-content: center;
         }
 
-        /* TEXTURA DE CARTÓN PEGADO A MANO */
         .tarjeta-carton {
             background: #cdaf79;
             color: #261c0e;
-            padding: 20px;
+            padding: 10px;
             position: relative;
             box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
             border-left: 3px solid #b59663;
             border-bottom: 2px solid #9c7f52;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* ROTACIONES ASIMÉTRICAS DE LA IMAGEN NORTE */
-        .carton-angulo-1 { transform: rotate(-1.2deg); }
-        .carton-angulo-2 { transform: rotate(1deg); }
-        .carton-angulo-3 { transform: rotate(-0.8deg); }
+        .carton-angulo-1 { transform: rotate(-0.5deg); }
+        .carton-angulo-2 { transform: rotate(0.5deg); }
+        .carton-angulo-3 { transform: rotate(-0.3deg); }
 
-        /* CINTAS DE EMBALAR INDUSTRIALES */
         .cinta-adhesiva {
-            position: absolute;
-            width: 70px;
-            height: 22px;
-            background: rgba(212, 175, 118, 0.45);
-            backdrop-filter: blur(1px);
+            position: absolute; width: 40px; height: 14px;
+            background: rgba(212, 175, 118, 0.45); backdrop-filter: blur(1px);
             border-left: 1px dashed rgba(255,255,255,0.2);
         }
-        .superior-izquierda { top: -10px; left: -15px; transform: rotate(-15deg); }
-        .superior-derecha { top: -10px; right: -15px; transform: rotate(20deg); }
-        .inferior-izquierda { bottom: -10px; left: 10px; transform: rotate(5deg); }
+        .superior-izquierda { top: -6px; left: -10px; transform: rotate(-15deg); }
+        .superior-derecha { top: -6px; right: -10px; transform: rotate(20deg); }
+        .inferior-izquierda { bottom: -6px; left: 10px; transform: rotate(5deg); }
 
-        /* TEXTURA DE CHAPA OXIDADA INDUSTRIAL */
         .tarjeta-chapa-oxidada {
             background: linear-gradient(135deg, #422d22, #261710);
             border: 2px solid #543d31;
             color: #ebd0c2;
-            padding: 20px;
+            padding: 10px;
             position: relative;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 5px 5px 10px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .remache {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #1a110c;
-            border-radius: 50%;
-            border-bottom: 1px solid #735647;
-        }
-        .sup-izq { top: 6px; left: 6px; }
-        .sup-der { top: 6px; right: 6px; }
-        .inf-izq { bottom: 6px; left: 6px; }
-        .inf-der { bottom: 6px; right: 6px; }
+        .remache { position: absolute; width: 4px; height: 4px; background: #1a110c; border-radius: 50%; border-bottom: 1px solid #735647; }
+        .sup-izq { top: 4px; left: 4px; } .sup-der { top: 4px; right: 4px; }
+        .inf-izq { bottom: 4px; left: 4px; } .inf-der { bottom: 4px; right: 4px; }
 
-        /* REQUISITO DE BAJO STOCK (ALERTA RADIAL) */
-        .badge-bajo-stock {
-            color: #166534;
-            border: 1px solid #166534;
-            padding: 2px 6px;
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
+        .badge-bajo-stock { color: #166534; border: 1px solid #166534; padding: 1px 4px; font-weight: bold; font-size: 0.6rem; }
+        .badge-bajo-stock-alerta { color: #ef4444; border: 1px solid #ef4444; padding: 1px 4px; font-weight: bold; font-size: 0.6rem; text-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
 
-        .badge-bajo-stock-alerta {
-            color: #ef4444;
-            border: 1px solid #ef4444;
-            padding: 2px 6px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            text-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
-        }
-
-        /* INFRAESTRUCTURA INFERIOR */
         .panel-infraestructura {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 40px;
-            align-items: center;
-        }
-
-        .marco-estatus {
-            border: 1px solid #4ade80;
-            padding: 10px;
-            background: rgba(0,0,0,0.4);
-        }
-
-        .text-ok {
-            color: #4ade80;
-            margin: 0;
-            font-size: 0.85rem;
-        }
-
-        .contenedor-cajon-madera {
-            background: #544333;
-            border: 3px double #362a1f;
-            padding: 15px;
-            color: #d1bba7;
-        }
-
-        .contenedor-arpillera {
-            background: #7a654d;
-            border: 1px dashed #47392b;
-            padding: 15px;
-            color: #1f170f;
-            font-weight: bold;
-        }
-
-        .tarjeta-chapa-mini {
-            background: #382d26;
-            border: 1px solid #524238;
-            padding: 10px 20px;
-        }
-
-        /* DETALLES DE PRODUCTO INTERNOS */
-        .producto-titulo { margin: 0 0 10px 0; font-size: 1.1rem; text-transform: uppercase; }
-        .precio-industrial { font-size: 1.4rem; color: #4ade80; font-weight: bold; margin: 0 0 10px 0; }
-        .info-suministro p { margin: 4px 0; font-size: 0.75rem; }
-        .sku { display: block; margin: 8px 0; font-size: 0.8rem; }
-        
-        /* CONTENEDORES MOCKUP DE MARCAS URBANA */
-        .mock-asset-grollz, .mock-asset-sayri, .mock-asset-raw, .mock-asset-clipper {
-            background: rgba(0,0,0,0.2);
-            height: 60px;
-            margin: 10px 0;
-            display: flex;
+            gap: 5px;
+            margin-top: 10px;
             align-items: center;
             justify-content: center;
+            font-size: 0.65rem;
+        }
+
+        .marco-estatus { border: 1px solid #4ade80; padding: 4px 8px; background: rgba(0,0,0,0.4); }
+        .text-ok { color: #4ade80; margin: 0; }
+
+        .contenedor-cajon-madera { background: #544333; border: 3px double #362a1f; padding: 4px 8px; color: #d1bba7; }
+        .contenedor-arpillera { background: #7a654d; border: 1px dashed #47392b; padding: 4px 8px; color: #1f170f; font-weight: bold; }
+        .tarjeta-chapa-mini { background: #382d26; border: 1px solid #524238; padding: 4px 8px; }
+
+        .producto-titulo { margin: 0 0 5px 0; font-size: 0.8rem; text-transform: uppercase; }
+        .producto-tag { font-size: 0.6rem; }
+        .precio-industrial { font-size: 1rem; color: #4ade80; font-weight: bold; margin: 0 0 5px 0; }
+        .info-suministro p { margin: 2px 0; font-size: 0.6rem; }
+        .sku { display: block; margin: 4px 0; font-size: 0.6rem; }
+        
+        .mock-asset-grollz, .mock-asset-sayri, .mock-asset-raw, .mock-asset-clipper {
+            background: rgba(0,0,0,0.2);
+            height: 35px;
+            margin: 5px 0;
+            display: flex; align-items: center; justify-content: center;
             border: 1px dashed rgba(0,0,0,0.15);
         }
-        .text-stencil, .text-sayri, .text-raw { font-weight: bold; letter-spacing: 2px; }
-        .clipper-neon-body { width: 15px; height: 45px; background: #4ade80; box-shadow: 0 0 8px #4ade80; border-radius: 2px; }
+        .text-stencil, .text-sayri, .text-raw { font-weight: bold; letter-spacing: 2px; font-size: 0.7rem; }
+        .clipper-neon-body { width: 10px; height: 25px; background: #4ade80; box-shadow: 0 0 8px #4ade80; border-radius: 2px; }
     </style>
 </head>
 <body>
@@ -314,15 +220,9 @@
         <div class="tarjeta-carton carton-angulo-1">
             <div class="cinta-adhesiva superior-izquierda"></div>
             <h3 class="producto-titulo">PAPELILLOS G-ROLLZ</h3>
-            <p class="producto-tag">PRODUCTO</p>
-            <div class="mock-asset-grollz">
-                <span class="text-stencil">G-ROLLZ</span>
-            </div>
+            <div class="mock-asset-grollz"><span class="text-stencil">G-ROLLZ</span></div>
             <div class="info-suministro">
-                <p>ESTADO DE SUMINISTRO</p>
                 <span class="sku">SKU: <span class="badge-bajo-stock">BAJO STOCK</span></span>
-                <p class="detalle-origen">ORIGEN: ARG</p>
-                <p class="detalle-origen">TEXTURA: PAPEL</p>
             </div>
         </div>
 
@@ -331,42 +231,27 @@
             <div class="remache inf-izq"></div><div class="remache inf-der"></div>
             <h3 class="producto-titulo">TABACO SAYRI</h3>
             <p class="precio-industrial">$4800</p>
-            <div class="mock-asset-sayri">
-                <span class="text-sayri">SAYRI</span>
-            </div>
+            <div class="mock-asset-sayri"><span class="text-sayri">SAYRI</span></div>
             <div class="info-suministro">
-                <p>ESTADO DE SUMINISTRO</p>
                 <span class="sku">SKU: <span class="badge-bajo-stock-alerta">BAJO STOCK</span></span>
-                <p class="detalle-origen">ORIGEN: ARG</p>
-                <p class="detalle-origen">TEXTURA: TABACO</p>
             </div>
         </div>
 
         <div class="tarjeta-carton carton-angulo-2">
             <div class="cinta-adhesiva superior-derecha"></div>
             <h3 class="producto-titulo">FILTROS RAW</h3>
-            <div class="mock-asset-raw">
-                <span class="text-raw">RAW</span>
-            </div>
+            <div class="mock-asset-raw"><span class="text-raw">RAW</span></div>
             <div class="info-suministro">
-                <p>ESTADO DE SUMINISTRO</p>
                 <span class="sku">SKU: <span class="badge-bajo-stock">BAJO STOCK</span></span>
-                <p class="detalle-origen">ORIGEN: ARG</p>
-                <p class="detalle-origen">TEXTURA: FILTROS</p>
             </div>
         </div>
 
         <div class="tarjeta-carton carton-angulo-3">
             <div class="cinta-adhesiva inferior-izquierda"></div>
             <h3 class="producto-titulo">ENCENDEDOR CLIPPER</h3>
-            <div class="mock-asset-clipper">
-                <div class="clipper-neon-body"></div>
-            </div>
+            <div class="mock-asset-clipper"><div class="clipper-neon-body"></div></div>
             <div class="info-suministro">
-                <p>ESTADO DE SUMINISTRO</p>
                 <span class="sku">SKU: <span class="badge-bajo-stock">BAJO STOCK</span></span>
-                <p class="detalle-origen">ORIGEN: ARG</p>
-                <p class="detalle-origen">TEXTURA: CRAERO OR SEL</p>
             </div>
         </div>
         
@@ -375,21 +260,20 @@
     <footer class="panel-infraestructura">
         <div class="modulo-estatus">
             <div class="marco-estatus">
-                <p class="text-ok">[SISTEMA NEXO BABYLONIA - ESTABLE]</p>
+                <p class="text-ok">[SISTEMA NEXO - ESTABLE]</p>
             </div>
         </div>
         
         <div class="contenedor-cajon-madera">
-            <p class="cajon-texto">KIT DE GERMINACIÓN TDF</p>
+            <p>GERMINACIÓN TDF</p>
         </div>
 
         <div class="contenedor-arpillera">
-            <p class="arpillera-texto">SUSTRATO PREM.</p>
+            <p>SUSTRATO PREM.</p>
         </div>
 
         <div class="tarjeta-chapa-mini">
-            <p class="kit-titulo">KIT INDOOR COMPLETO</p>
-            <p class="sku-precio">SKU: $15000</p>
+            <p>KIT INDOOR $15K</p>
             <span class="badge-bajo-stock-alerta">BAJO STOCK</span>
         </div>
     </footer>
@@ -402,20 +286,17 @@
 
     createApp({
         setup() {
-            // Sincronización de estados locales estables
             const isSmokeShop = ref(false);
             const sistemaIniciado = ref(true);
             const ambientAudio = ref(null);
 
             onMounted(() => {
-                // El audio nace estrictamente enmudecido cumpliendo directiva multimedia
                 if (ambientAudio.value) {
                     ambientAudio.value.muted = true;
                 }
             });
 
             const alternarSector = () => {
-                // Emisión simulada limpia manteniendo síncrona la reactividad
                 console.log('Cambio-sector emitido:', isSmokeShop.value ? 'smoke_shop' : 'cultivo_indoor');
             };
 
