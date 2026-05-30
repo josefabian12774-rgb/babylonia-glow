@@ -3,83 +3,340 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BABYLONIA GLOW - CORE UI</title>
+    <title>BABYLONIA GLOW - PROTOCOLO E.U.L.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
     <style>
-        :root { --neon: #4ade80; --cardboard: #cdaf79; --metal: #242422; }
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Courier Prime', monospace; background: #1a1a1a; }
+        /* =======================================================================
+           NEXO ARQUETIPO: SISTEMA DE CONSTRUCCIÓN CAÓTICA / MURAL INDUSTRIAL
+           ======================================================================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-        /* Contenedor Base - Cemento Industrial */
-        .bunker-root {
-            height: 100vh; width: 100vw;
-            background: #2a2a2a; /* Textura base */
-            display: grid;
-            grid-template-rows: auto 1fr auto;
-            padding: 10px;
-            gap: 10px;
+        /* PARED DE HORMIGÓN DEGRADADO CON MANCHAS */
+        .pared-muro {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: #1a1917;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(40, 30, 20, 0.6) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(50, 40, 25, 0.4) 0%, transparent 30%),
+                url('https://www.transparenttextures.com/patterns/black-scales.png');
+            font-family: 'Special Elite', cursive;
+            position: relative;
+            color: #d1d1d1;
         }
 
-        /* Botón Reactivo Industrial */
-        .btn-industrial {
-            background: var(--cardboard);
+        /* --- CABECERA PINTADA CON AERÓGRAFO --- */
+        .cabecera-spray {
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            text-align: center;
+            z-index: 20;
+        }
+        .titulo-neon {
+            font-size: 2.2rem;
+            color: #4ade80;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-shadow: 0 0 15px rgba(74, 222, 128, 0.8), 2px 2px 0px #000;
+            font-family: 'Courier Prime', monospace;
+        }
+        .sub-spray {
+            font-size: 0.6rem;
+            color: #a3a3a3;
+            letter-spacing: 3px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        /* --- SWITCH CUCHILLA INDUSTRIAL --- */
+        .consola-oxida {
+            position: absolute;
+            top: 75px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, #3a3a38, #222220);
+            padding: 8px 18px;
             border: 2px solid #555;
-            cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.1s;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 5px; text-align: center; font-size: 10px; text-transform: uppercase;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.9), 3px 3px 0 #000;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 20;
         }
-        .btn-industrial:active { transform: scale(0.95); box-shadow: inset 5px 5px 10px rgba(0,0,0,0.5); }
-
-        /* Grilla del Arsenal - Sin Scroll */
-        .grid-arsenal {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        /* Estética de Chapa/Cartón */
-        .card-chapa { background: var(--metal); border: 2px solid #444; color: #fff; }
+        .lbl { font-size: 0.7rem; font-weight: bold; }
+        .on { color: #4ade80; text-shadow: 0 0 8px rgba(74, 222, 128, 0.7); }
+        .off { color: #555; }
         
-        .header-ui { color: var(--neon); text-align: center; font-size: 20px; text-shadow: 0 0 5px var(--neon); }
-        .footer-ui { display: flex; justify-content: space-between; align-items: center; color: var(--neon); }
+        .switch-cuchilla { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch-cuchilla input { opacity: 0; width: 0; height: 0; }
+        .deslizador {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #111; border: 2px solid #444; transition: .4s; border-radius: 20px;
+        }
+        .deslizador:before {
+            position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px;
+            background-color: #777; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .deslizador { background-color: #1a3a22; border-color: #4ade80; }
+        input:checked + .deslizador:before { transform: translateX(20px); background-color: #4ade80; box-shadow: 0 0 10px #4ade80; }
+
+        /* --- MONITOR RADIAL --- */
+        .monitor-estado {
+            position: absolute;
+            top: 125px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.65rem;
+            color: #4ade80;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(74,222,128,0.4);
+            z-index: 15;
+        }
+
+        /* --- MADERA / CHAPA LATERAL IZQUIERDA (MENU) --- */
+        .panel-nav {
+            position: absolute;
+            top: 155px;
+            left: 8px;
+            width: 70px;
+            height: 320px;
+            background: linear-gradient(90deg, #4a3d35, #3e302a, #4a3d35);
+            border-left: 4px solid #2a201b;
+            border-right: 2px solid #5a4a40;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            padding: 15px 5px;
+            gap: 15px;
+            z-index: 10;
+            /* Textura de vetas de madera */
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+        }
+
+        .btn-madera {
+            background: #c8a97e;
+            color: #3d2b1f;
+            border: none;
+            padding: 6px 2px;
+            font-family: 'Special Elite', cursive;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-align: center;
+            transform: rotate(-2deg);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+            clip-path: polygon(0 0, 100% 5%, 95% 100%, 5% 95%);
+            transition: transform 0.1s;
+        }
+        .btn-madera:active { transform: rotate(0deg) scale(0.95); }
+        .btn-madera.activo { background: #4ade80; color: #000; clip-path: polygon(5% 0, 100% 0, 100% 95%, 0 100%); }
+
+        /* --- CARTONES Y CHAPAS DESORDENADOS (PRODUCTOS) --- */
+        .area-desordenada {
+            position: absolute;
+            top: 150px;
+            left: 85px;
+            right: 10px;
+            bottom: 80px;
+            z-index: 5;
+        }
+
+        .carton {
+            position: absolute;
+            background: #c8a876;
+            color: #2c1e10;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.7);
+            transition: transform 0.1s;
+            /* Manchas de café/tinta en el cartón */
+            background-image: radial-gradient(circle at 80% 20%, rgba(90, 50, 20, 0.3) 0%, transparent 40%);
+        }
+        .carton:active { transform: scale(0.96) !important; z-index: 50; }
+
+        .chapa {
+            position: absolute;
+            background: linear-gradient(135deg, #6b3a2a, #4a2518, #8c4b32);
+            color: #fbcfb0;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.6), 4px 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.1s;
+        }
+        .chapa:active { transform: scale(0.96) !important; z-index: 50; }
+
+        /* Cinta adhesiva gruesa y desalineada */
+        .cinta {
+            position: absolute;
+            width: 70px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-left: 1px dashed rgba(255,255,255,0.3);
+            border-right: 1px dashed rgba(255,255,255,0.3);
+            z-index: 30;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* Remaches para la chapa */
+        .remache {
+            position: absolute;
+            width: 6px; height: 6px;
+            background: radial-gradient(circle at 30% 30%, #999, #333);
+            border-radius: 50%;
+            box-shadow: 1px 1px 2px #000;
+            z-index: 30;
+        }
+
+        .prod-titulo { font-size: 0.9rem; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid rgba(0,0,0,0.3); }
+        .prod-precio { font-size: 1.2rem; font-weight: bold; margin-top: 8px; font-family: 'Courier Prime', monospace; }
+        .prod-precio.rojo { color: #ef4444; text-shadow: 0 0 5px rgba(239,68,68,0.4); }
+        .prod-precio.verde { color: #166534; }
+        .badge-stock { display: inline-block; margin-top: 5px; font-size: 0.5rem; padding: 2px 5px; border: 1px solid; }
+        .bajo { color: #ef4444; border-color: #ef4444; }
+        .normal { color: #166534; border-color: #166534; }
+
+        /* --- POSICIONES CAÓTICAS FIJAS --- */
+        .p1 { top: 5px; left: 5px; transform: rotate(-3deg); width: 55%; height: 42%; clip-path: polygon(0 0, 100% 3%, 97% 100%, 2% 95%); z-index: 2; }
+        .p2 { top: 0px; right: 0px; transform: rotate(4deg); width: 50%; height: 38%; z-index: 3; }
+        .p3 { bottom: 5px; left: 10px; transform: rotate(1deg); width: 52%; height: 42%; z-index: 4; }
+        .p4 { bottom: 0px; right: 5px; transform: rotate(-2deg); width: 55%; height: 48%; clip-path: polygon(3% 0, 100% 0, 98% 100%, 0 97%); z-index: 1; }
+
+        /* --- CAJÓN DE MADERA INFERIOR --- */
+        .cajon-inferior {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: #3e302a;
+            border-top: 4px solid #5a4a40;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 10px;
+            z-index: 40;
+            box-shadow: inset 0 10px 15px rgba(0,0,0,0.8);
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 12px);
+        }
+        .item-cajon {
+            background: #cdaf79;
+            padding: 5px 8px;
+            transform: rotate(-1deg);
+            font-size: 0.6rem;
+            color: #2c1e10;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            border: 1px dashed #8a7049;
+        }
+        .status-cajon {
+            font-size: 0.6rem;
+            color: #4ade80;
+            text-shadow: 0 0 5px rgba(74,222,128,0.4);
+            border: 1px solid #4ade80;
+            padding: 5px 8px;
+        }
+
     </style>
 </head>
 <body>
 
-<div id="app" class="bunker-root">
-    <header class="header-ui">BABYLONIA GLOW</header>
+<div id="app" class="pared-muro">
+    
+    <!-- CABECERA -->
+    <div class="cabecera-spray">
+        <h1 class="titulo-neon">BABYLONIA GLOW</h1>
+        <p class="sub-spray">LABORATORIO URBANO & PROVISIONES DE BARRIO - RÍO GRANDE</p>
+    </div>
 
-    <main class="grid-arsenal">
-        <button class="btn-industrial" @click="accion('PAPELILLOS')">PAPELILLOS G-ROLLZ</button>
-        <button class="btn-industrial card-chapa" @click="accion('TABACO')">TABACO SAYRI</button>
-        <button class="btn-industrial" @click="accion('FILTROS')">FILTROS RAW</button>
-        <button class="btn-industrial" @click="accion('CLIPPER')">ENCENDEDOR CLIPPER</button>
+    <!-- SWITCH -->
+    <div class="consola-oxida">
+        <span :class="['lbl', !isSmokeShop ? 'on' : 'off']">INDOOR</span>
+        <label class="switch-cuchilla">
+            <input type="checkbox" v-model="isSmokeShop">
+            <span class="deslizador"></span>
+        </label>
+        <span :class="['lbl', isSmokeShop ? 'on' : 'off']">SMOKE</span>
+    </div>
+
+    <!-- MONITOR -->
+    <div class="monitor-estado">
+        [STOCK MOSTRADOR - TIEMPO REAL] / ESTADO: ESTABLE
+    </div>
+
+    <!-- MENU IZQUIERDO (MADERA CLAVADA) -->
+    <aside class="panel-nav">
+        <button class="btn-madera activo" @click="clickNav('inicio')">INICIO</button>
+        <button class="btn-madera" @click="clickNav('lab')">LABORAT.</button>
+        <button class="btn-madera" @click="clickNav('smoke')">SMOKE</button>
+        <button class="btn-madera" @click="clickNav('contact')">CONTACTO</button>
+    </aside>
+
+    <!-- ZONA CAÓTICA DE PRODUCTOS -->
+    <main class="area-desordenada">
         
-        <button class="btn-industrial card-chapa" @click="accion('PICADOR')">PICADOR TÁCTICO</button>
-        <button class="btn-industrial" @click="accion('GERMINACION')">KIT GERMINACIÓN</button>
-        <button class="btn-industrial" @click="accion('SUSTRATO')">SUSTRATO PREM.</button>
-        <button class="btn-industrial card-chapa" @click="accion('KIT_INDOOR')">KIT INDOOR</button>
+        <!-- PRODUCTO 1: G-ROLLZ (CARTÓN) -->
+        <div class="carton p1" @click="clickProd('G-ROLLZ')">
+            <div class="cinta" style="top: -8px; left: 10px; transform: rotate(-45deg);"></div>
+            <div class="prod-titulo">PAPELILLOS G-ROLLZ</div>
+            <span class="badge-stock normal">STOCK</span>
+            <div class="prod-precio verde">$2500</div>
+        </div>
+
+        <!-- PRODUCTO 2: RAW (CARTÓN) -->
+        <div class="carton p2" @click="clickProd('RAW')">
+            <div class="cinta" style="top: -8px; right: 10px; transform: rotate(30deg);"></div>
+            <div class="prod-titulo">FILTROS RAW</div>
+            <span class="badge-stock normal">STOCK</span>
+            <div class="prod-precio verde">$2500</div>
+        </div>
+
+        <!-- PRODUCTO 3: CLIPPER (CARTÓN) -->
+        <div class="carton p3" @click="clickProd('CLIPPER')">
+            <div class="cinta" style="bottom: -8px; left: 20px; transform: rotate(10deg);"></div>
+            <div class="prod-titulo">ENCENDEDOR CLIPPER</div>
+            <span class="badge-stock normal">STOCK</span>
+            <div class="prod-precio verde">$2500</div>
+        </div>
+
+        <!-- PRODUCTO 4: SAYRI (CHAPA OXIDADA) -->
+        <div class="chapa p4" @click="clickProd('SAYRI')">
+            <div class="remache" style="top: 5px; left: 5px;"></div>
+            <div class="remache" style="top: 5px; right: 5px;"></div>
+            <div class="remache" style="bottom: 5px; left: 5px;"></div>
+            <div class="remache" style="bottom: 5px; right: 5px;"></div>
+            <div class="prod-titulo" style="border-bottom: 1px solid rgba(255,255,255,0.2);">TABACO SAYRI</div>
+            <span class="badge-stock bajo">BAJO STOCK</span>
+            <div class="prod-precio rojo">$4800</div>
+        </div>
+
     </main>
 
-    <footer class="footer-ui">
-        <div @click="accion('STATUS')">[SISTEMA ESTABLE]</div>
-        <div @click="accion('WHATSAPP')">⚡ REPORTE</div>
+    <!-- CAJÓN INFERIOR -->
+    <footer class="cajon-inferior">
+        <div class="item-cajon">KIT GERMINACIÓN TDF</div>
+        <div class="item-cajon">SUSTRATO PREM.</div>
+        <div class="status-cajon">[NEXO - ESTABLE]</div>
     </footer>
+
 </div>
 
 <script>
     const { createApp, ref } = Vue;
+
     createApp({
         setup() {
-            const accion = (tipo) => {
-                console.log('Interacción física detectada:', tipo);
-                // Aquí podés disparar las funciones síncronas de la nave
-            };
-            return { accion };
+            const isSmokeShop = ref(false);
+            
+            const clickNav = (sec) => console.log("Navegando a:", sec);
+            const clickProd = (prod) => console.log("Seleccionado:", prod);
+
+            return { isSmokeShop, clickNav, clickProd }
         }
     }).mount('#app');
 </script>
 </body>
 </html>
-
